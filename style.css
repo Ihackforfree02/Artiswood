@@ -1,0 +1,44 @@
+/* Reset and base styles */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #f4f0ea;
+  color: #3e2e1e;
+  line-height: 1.6;
+}
+
+/* Header */
+header {
+  background-color: #d9c5aa;
+  padding: 2rem 0;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+header h1 {
+  font-size: 3rem;
+  margin: 0;
+  letter-spacing: 2px;
+}
+
+/* Main content */
+main {
+  padding: 3rem 1.5rem;
+  text-align: center;
+}
+
+.intro {
+  max-width: 700px;
+  margin: 0 auto;
+  font-size: 1.2rem;
+}
+
+/* Footer */
+footer {
+  background-color: #e8dbc5;
+  text-align: center;
+  padding: 1rem 0;
+  font-size: 0.9rem;
+  color: #5d4a3a;
+}
