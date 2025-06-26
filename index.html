@@ -17,23 +17,30 @@
     }
 
     header {
-      background-color: transparent;
-      padding: 70px 20px 40px;
+      padding: 60px 20px 30px;
       text-align: center;
     }
 
-    header h1 {
-      font-size: 3.8em;
+    .title-box {
+      display: inline-block;
+      padding: 20px 40px;
+      border: 3px solid #000;
+      background-color: #fffdfa;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .title-box h1 {
       margin: 0;
+      font-size: 3.2em;
       font-weight: 700;
-      color: #000; /* Black title */
-      letter-spacing: 2px;
+      color: #000;
+      letter-spacing: 1.5px;
     }
 
     header p {
-      font-size: 1.2em;
+      margin-top: 20px;
+      font-size: 1.1em;
       color: #5c4937;
-      margin-top: 10px;
     }
 
     .intro {
@@ -79,7 +86,9 @@
 </head>
 <body>
   <header>
-    <h1>Art is Wood</h1>
+    <div class="title-box">
+      <h1>Art is Wood</h1>
+    </div>
     <p>Timeless Craftsmanship. Naturally Inspired.</p>
   </header>
 
