@@ -2,134 +2,95 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Clash Royale Deck Matcher</title>
+  <title>Deck Matcher | Clash Royale</title>
   <style>
     body {
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
-      background: url('https://wallpapercave.com/wp/wp4676572.jpg') center/cover no-repeat;
+      background: linear-gradient(to bottom right, #1e1e2f, #3a3a5c);
       color: #fff;
     }
-
     nav {
-      position: fixed;
-      top: 0;
-      width: 100%;
-      background-color: rgba(0, 0, 0, 0.85);
-      display: flex;
-      justify-content: center;
-      padding: 1rem 0;
-      z-index: 1000;
-      box-shadow: 0 0 10px #ffcc00;
+      background-color: #222;
+      padding: 1rem;
+      text-align: center;
+      box-shadow: 0 0 10px #00c8ff;
     }
-
     nav a {
-      color: #ffcc00;
+      color: #00c8ff;
+      margin: 0 1rem;
       text-decoration: none;
-      margin: 0 2rem;
-      font-size: 1rem;
-      font-weight: 600;
+      font-weight: bold;
     }
-
-    nav a:hover {
-      color: #ffffff;
-    }
-
     header {
       text-align: center;
-      padding: 6rem 2rem 2rem;
-      background-color: rgba(0, 0, 0, 0.6);
+      padding: 4rem 2rem 2rem;
     }
-
     header h1 {
-      font-size: 4rem;
-      color: #ffcc00;
-      text-shadow: 0 0 10px #000;
+      font-size: 3rem;
+      color: #00c8ff;
     }
-
-    header p {
-      font-size: 1.2rem;
-      color: #e0e0ff;
-    }
-
     .content {
-      max-width: 900px;
-      margin: 2rem auto;
+      max-width: 1000px;
+      margin: auto;
       padding: 2rem;
-      background-color: rgba(0, 0, 0, 0.75);
+      background-color: rgba(0, 0, 0, 0.6);
       border-radius: 10px;
-      box-shadow: 0 0 20px rgba(255, 204, 0, 0.3);
     }
-
-    h2 {
-      color: #ffcc00;
-      text-shadow: 0 0 5px #ffcc00;
-    }
-
     select, button {
-      padding: 0.7rem;
+      padding: 0.6rem;
       font-size: 1rem;
+      margin-top: 1rem;
       border-radius: 5px;
       border: none;
-      margin-top: 1rem;
     }
-
     select {
       background-color: #333;
-      color: #ffcc00;
-      box-shadow: 0 0 5px #ffcc00;
+      color: #00c8ff;
     }
-
     button {
-      background-color: #ffcc00;
+      background-color: #00c8ff;
       color: #000;
       font-weight: bold;
       cursor: pointer;
     }
-
-    button:hover {
-      background-color: #e6b800;
-    }
-
-    .deck-result {
+    .deck {
       margin-top: 2rem;
       padding: 1rem;
-      background-color: #1a1a2e;
-      border-radius: 8px;
-      box-shadow: 0 0 10px #ffcc00;
-    }
-
-    .deck-result h3 {
-      color: #ffcc00;
-    }
-
-    .deck-result ul {
-      list-style: none;
-      padding-left: 0;
-    }
-
-    .deck-result li {
       background-color: #2c2c54;
-      margin: 0.3rem 0;
-      padding: 0.5rem;
-      border-radius: 5px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px #00c8ff;
+    }
+    .deck h3 {
+      color: #00c8ff;
+    }
+    .cards {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 1rem;
+    }
+    .cards img {
+      width: 60px;
+      height: 60px;
+      border-radius: 8px;
+      border: 2px solid #00c8ff;
     }
   </style>
 </head>
 <body>
   <nav>
     <a href="#">Home</a>
-    <a href="#match">Match My Deck</a>
     <a href="deck_trender.html">Trending Decks</a>
   </nav>
 
   <header>
-    <h1>Clash Royale Deck Matcher</h1>
-    <p>Find the best decks for your arena — updated for the latest meta</p>
+    <h1>Deck Matcher</h1>
+    <p>Select your arena and get the best decks with card previews</p>
   </header>
 
-  <div class="content" id="match">
-    <h2>🏟️ Select Your Arena</h2>
+  <div class="content">
+    <label for="arena">Choose Arena:</label>
     <select id="arena">
       <script>
         for (let i = 1; i <= 28; i++) {
@@ -138,12 +99,9 @@
       </script>
     </select>
     <br />
-    <button onclick="matchDeck()">Find My Decks</button>
+    <button onclick="showDecks()">Show Decks</button>
 
-    <div class="deck-result" id="deckResult" style="display:none;">
-      <h3>Top Decks</h3>
-      <ul id="deckList"></ul>
-    </div>
+    <div id="deckContainer"></div>
   </div>
 
   <script>
@@ -156,25 +114,37 @@
         ["Valkyrie", "Wizard", "Giant", "Goblin Gang", "Arrows", "Cannon", "Spear Goblins", "Fireball"],
         ["Mini P.E.K.K.A", "Prince", "Zap", "Bomber", "Archers", "Knight", "Skeleton Army", "Fireball"]
       ]
-      // Add more decks for Arena 3–28 here
+      // Add decks for Arena 3–28 here
     };
 
-    function matchDeck() {
-      const arena = document.getElementById('arena').value;
-      const deckList = document.getElementById('deckList');
-      const deckResult = document.getElementById('deckResult');
+    function getCardImage(cardName) {
+      const formatted = cardName.toLowerCase().replace(/[\s\.']/g, '-');
+      return `https://royaleapi.com/images/cards/${formatted}.png`;
+    }
 
-      deckList.innerHTML = '';
+    function showDecks() {
+      const arena = document.getElementById('arena').value;
+      const container = document.getElementById('deckContainer');
+      container.innerHTML = '';
+
       if (decks[arena]) {
         decks[arena].forEach((deck, index) => {
-          const li = document.createElement('li');
-          li.textContent = `Deck ${index + 1}: ${deck.join(', ')}`;
-          deckList.appendChild(li);
+          const deckDiv = document.createElement('div');
+          deckDiv.className = 'deck';
+          deckDiv.innerHTML = `<h3>Deck ${index + 1}</h3><div class="cards"></div>`;
+          const cardContainer = deckDiv.querySelector('.cards');
+
+          deck.forEach(card => {
+            const img = document.createElement('img');
+            img.src = getCardImage(card);
+            img.alt = card;
+            cardContainer.appendChild(img);
+          });
+
+          container.appendChild(deckDiv);
         });
-        deckResult.style.display = 'block';
       } else {
-        deckList.innerHTML = '<li>No decks available yet for this arena.</li>';
-        deckResult.style.display = 'block';
+        container.innerHTML = '<p>No decks available for this arena yet.</p>';
       }
     }
   </script>
