@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>DeckForge | Clash Royale Deck Matcher</title>
+  <title>Clash Royale Deck Matcher</title>
   <style>
     html, body {
       margin: 0;
       padding: 0;
       font-family: 'Segoe UI', sans-serif;
-      background: url('https://cdn.supercell.com/supercell.com/220912112914/all/themes/supercell/img/bg-clashroyale.jpg') center/cover no-repeat;
-      color: #f0f0f0;
+      background: url('https://wallpapercave.com/wp/wp4676572.jpg') center/cover no-repeat;
+      color: #fff;
       overflow-x: hidden;
     }
 
@@ -17,16 +17,16 @@
       position: fixed;
       top: 0;
       width: 100%;
-      background-color: rgba(0, 0, 0, 0.8);
+      background-color: rgba(0, 0, 0, 0.85);
       display: flex;
       justify-content: center;
       padding: 1rem 0;
       z-index: 1000;
-      box-shadow: 0 0 10px #00f2ff;
+      box-shadow: 0 0 10px #ffcc00;
     }
 
     nav a {
-      color: #00f2ff;
+      color: #ffcc00;
       text-decoration: none;
       margin: 0 2rem;
       font-size: 1rem;
@@ -47,7 +47,7 @@
     header h1 {
       font-size: 4rem;
       margin-bottom: 0.5rem;
-      color: #ffd700;
+      color: #ffcc00;
       text-shadow: 0 0 10px #000;
     }
 
@@ -60,15 +60,15 @@
       max-width: 900px;
       margin: 2rem auto;
       padding: 2rem;
-      background-color: rgba(0, 0, 0, 0.7);
+      background-color: rgba(0, 0, 0, 0.75);
       border-radius: 10px;
-      box-shadow: 0 0 20px rgba(0, 242, 255, 0.3);
+      box-shadow: 0 0 20px rgba(255, 204, 0, 0.3);
     }
 
     .content h2 {
-      color: #00f2ff;
+      color: #ffcc00;
       margin-top: 2rem;
-      text-shadow: 0 0 5px #00f2ff;
+      text-shadow: 0 0 5px #ffcc00;
     }
 
     .arena-selector {
@@ -76,34 +76,22 @@
       text-align: center;
     }
 
-    .arena-card {
-      display: inline-block;
-      margin: 0.5rem;
-      padding: 1rem;
-      background-color: #2c2c54;
-      border-radius: 8px;
-      color: #00f2ff;
-      cursor: pointer;
-      transition: transform 0.2s;
-      box-shadow: 0 0 10px #00f2ff;
-    }
-
-    .arena-card:hover {
-      transform: scale(1.05);
-      background-color: #3c3c74;
-    }
-
-    .arena-card.selected {
-      border: 2px solid #ffd700;
-      box-shadow: 0 0 15px #ffd700;
+    select {
+      padding: 0.7rem;
+      font-size: 1rem;
+      border-radius: 5px;
+      border: none;
+      background-color: #333;
+      color: #ffcc00;
+      box-shadow: 0 0 5px #ffcc00;
     }
 
     button {
       margin-top: 1rem;
       padding: 0.7rem 1.5rem;
       font-size: 1rem;
-      background-color: #00f2ff;
-      color: #2c2c54;
+      background-color: #ffcc00;
+      color: #000;
       border: none;
       border-radius: 5px;
       cursor: pointer;
@@ -112,7 +100,7 @@
     }
 
     button:hover {
-      background-color: #00c3cc;
+      background-color: #e6b800;
     }
 
     .deck-result {
@@ -120,11 +108,11 @@
       padding: 1rem;
       background-color: #1a1a2e;
       border-radius: 8px;
-      box-shadow: 0 0 10px #00f2ff;
+      box-shadow: 0 0 10px #ffcc00;
     }
 
     .deck-result h3 {
-      color: #00f2ff;
+      color: #ffcc00;
       margin-bottom: 0.5rem;
     }
 
@@ -145,23 +133,41 @@
   <nav>
     <a href="#">Home</a>
     <a href="#match">Match My Deck</a>
-    <a href="#about">About</a>
   </nav>
 
   <header>
-    <h1>DeckForge</h1>
-    <p>Forge your perfect Clash Royale deck based on your arena level</p>
+    <h1>Clash Royale Deck Matcher</h1>
+    <p>Get the best deck for your current arena — updated for the latest meta</p>
   </header>
 
   <div class="content" id="match">
     <h2>🏟️ Select Your Arena</h2>
-    <p>Tap your current arena to get a custom deck built for your level.</p>
-
-    <div class="arena-selector" id="arenaSelector">
-      <!-- Arena cards will be injected here -->
+    <div class="arena-selector">
+      <select id="arena">
+        <option value="1">Arena 1: Goblin Stadium</option>
+        <option value="2">Arena 2: Bone Pit</option>
+        <option value="3">Arena 3: Barbarian Bowl</option>
+        <option value="4">Arena 4: P.E.K.K.A's Playhouse</option>
+        <option value="5">Arena 5: Spell Valley</option>
+        <option value="6">Arena 6: Builder's Workshop</option>
+        <option value="7">Arena 7: Royal Arena</option>
+        <option value="8">Arena 8: Frozen Peak</option>
+        <option value="9">Arena 9: Jungle Arena</option>
+        <option value="10">Arena 10: Hog Mountain</option>
+        <option value="11">Arena 11: Electro Valley</option>
+        <option value="12">Arena 12: Spooky Town</option>
+        <option value="13">Arena 13: Rascal's Hideout</option>
+        <option value="14">Arena 14: Serenity Peak</option>
+        <option value="15">Arena 15: Legendary Arena</option>
+        <option value="16">Arena 16: Champions Arena</option>
+        <option value="17">Arena 17: Ultimate Champion</option>
+        <option value="18">Arena 18: Grand Champion</option>
+        <option value="19">Arena 19: Royal Champion</option>
+        <option value="20">Arena 20: Legendary Champion</option>
+      </select>
+      <br>
+      <button onclick="matchDeck()">Find My Deck</button>
     </div>
-
-    <button onclick="matchDeck()">Find My Deck</button>
 
     <div class="deck-result" id="deckResult" style="display:none;">
       <h3>Recommended Deck</h3>
@@ -169,28 +175,19 @@
     </div>
   </div>
 
-  <div class="content" id="about">
-    <h2>🎯 About DeckForge</h2>
-    <p>DeckForge is your personal deck builder powered by strategy and synergy. Whether you're just starting out or battling in Legendary Arena, we help you dominate with optimized card combos and tactics.</p>
-  </div>
-
   <script>
     const decks = {
-      "1": ["Knight", "Archers", "Bomber", "Giant", "Mini P.E.K.K.A", "Arrows", "Fireball", "Musketeer"],
-      "2": ["Goblin Hut", "Spear Goblins", "Prince", "Baby Dragon", "Skeletons", "Zap", "Mini P.E.K.K.A", "Bomber"],
-      "3": ["Barbarians", "Cannon", "Valkyrie", "Wizard", "Arrows", "Giant", "Goblin Barrel", "Tesla"],
-      "4": ["Inferno Tower", "Hog Rider", "Freeze", "Skeleton Army", "Witch", "Fireball", "Goblin Gang", "Zap"],
-      "5": ["Mirror", "Poison", "Dark Prince", "Ice Spirit", "Miner", "Mini P.E.K.K.A", "Tornado", "Log"],
+      "1": ["Giant", "Archers", "Bomber", "Mini P.E.K.K.A", "Arrows", "Knight", "Musketeer", "Fireball"],
+      "2": ["Prince", "Baby Dragon", "Skeleton Army", "Goblin Barrel", "Mini P.E.K.K.A", "Zap", "Bomber", "Archers"],
+      "3": ["Valkyrie", "Wizard", "Giant", "Goblin Gang", "Arrows", "Cannon", "Spear Goblins", "Fireball"],
+      "4": ["Hog Rider", "Inferno Tower", "Freeze", "Witch", "Skeleton Army", "Zap", "Goblin Gang", "Fireball"],
+      "5": ["Miner", "Poison", "Dark Prince", "Mini P.E.K.K.A", "Zap", "Tornado", "Log", "Ice Spirit"],
       "6": ["Battle Ram", "Electro Wizard", "Bandit", "P.E.K.K.A", "Zap", "Royal Ghost", "Magic Archer", "Goblin Cage"],
-      "7": ["Mega Minion", "Lightning", "Elixir Collector", "Three Musketeers", "Heal Spirit", "Ice Golem", "Hunter", "Cannon Cart"],
+      "7": ["Mega Minion", "Lightning", "Elixir Collector", "Three Musketeers", "Heal Spirit", "Hunter", "Ice Golem", "Cannon Cart"],
       "8": ["Balloon", "Freeze", "Lumberjack", "Baby Dragon", "Tornado", "Ice Wizard", "Bowler", "Barbarian Barrel"],
       "9": ["Royal Giant", "Furnace", "Fire Spirits", "Goblin Gang", "Hunter", "Zap", "Mega Minion", "Electro Dragon"],
       "10": ["Miner", "Poison", "Wall Breakers", "Bomb Tower", "Bats", "Spear Goblins", "Log", "Ice Spirit"],
       "11": ["X-Bow", "Tesla", "Archers", "Ice Spirit", "Skeletons", "Log", "Fireball", "Knight"],
       "12": ["Graveyard", "Baby Dragon", "Freeze", "Tornado", "Knight", "Ice Wizard", "Barbarian Barrel", "Poison"],
       "13": ["Golem", "Night Witch", "Baby Dragon", "Tornado", "Lightning", "Mega Minion", "Dark Prince", "Barbarian Barrel"],
-      "14": ["Royal Hogs", "Flying Machine", "Zappies", "Fireball", "Heal Spirit", "Hunter", "Goblin Cage", "Earthquake"],
-      "15": ["Ram Rider", "Bandit", "Magic Archer", "Barbarian Barrel", "Inferno Dragon", "Electro Wizard", "Snowball", "P.E.K.K.A"],
-      "16": ["Electro Giant", "Golden Knight", "Tornado", "Lightning", "Dark Prince", "Baby Dragon", "Cannon", "Barbarian Barrel"],
-      "17": ["Archer Queen", "Skeleton King", "Golden Knight", "Lightning", "Goblin Drill", "Fireball", "Log", "Inferno Tower"],
-      "18": ["Phoenix", "Monk
+      "14": ["Royal Hogs", "Flying Machine
