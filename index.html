@@ -2,254 +2,46 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Clash Royale Decks & Card Library</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Deck AI</title>
   <style>
-    /* === General Reset & Body === */
-    * {
-      box-sizing: border-box;
-    }
     body {
-      margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: url('https://i.imgur.com/0kuTYpL.jpg') no-repeat center center fixed;
-      background-size: cover;
-      color: #fff;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-
-    /* === Header === */
-    header {
-      background: rgba(0,0,0,0.7);
-      padding: 1rem 2rem;
-      text-align: center;
-      border-bottom: 3px solid #f7b733;
-      box-shadow: 0 0 10px #f7b733;
-      user-select: none;
-    }
-    header h1 {
-      margin: 0;
-      font-size: 2.8rem;
-      letter-spacing: 2px;
-      color: #f7b733;
-      text-shadow: 0 0 10px #f7b733;
-    }
-    header p {
-      margin-top: 0.3rem;
-      font-size: 1.1rem;
-      font-weight: 600;
-      color: #ffd54f;
-      text-shadow: 0 0 5px #ffd54f;
-    }
-
-    /* === Container === */
-    #app {
-      max-width: 1200px;
-      margin: 1rem auto 3rem;
-      padding: 1rem 2rem;
-      background: rgba(0,0,0,0.7);
-      border-radius: 12px;
-      box-shadow: 0 0 15px #f7b733;
-      flex-grow: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 2rem;
-    }
-
-    /* === Arena Selector === */
-    #arenaSelector {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      justify-content: center;
-      margin-bottom: 1rem;
-    }
-    .arena-btn {
+      font-family: Arial, sans-serif;
       background: #111;
-      border: 2px solid #f7b733;
-      border-radius: 10px;
-      padding: 0.4rem 1rem;
-      color: #f7b733;
-      cursor: pointer;
-      font-weight: 600;
-      transition: all 0.3s ease;
-      user-select: none;
-      min-width: 100px;
-      text-align: center;
-    }
-    .arena-btn:hover, .arena-btn.active {
-      background: #f7b733;
-      color: #111;
-      box-shadow: 0 0 12px #f7b733;
-      border-color: #f7b733;
-    }
-
-    /* === Decks Section === */
-    #deckSection {
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-    }
-    .deck {
-      background: rgba(247, 183, 51, 0.15);
-      border: 2px solid #f7b733;
-      border-radius: 12px;
-      padding: 1rem 1.5rem;
-      box-shadow: 0 0 10px #f7b733;
-    }
-    .deck h2 {
-      margin: 0 0 0.5rem 0;
-      font-size: 1.5rem;
-      color: #ffd54f;
-      text-shadow: 0 0 6px #ffd54f;
-    }
-    .deck .cards {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 0.5rem;
-    }
-    .deck .card {
-      text-align: center;
-      cursor: pointer;
-      transition: transform 0.2s ease;
-      width: 56px;
-    }
-    .deck .card img {
-      width: 56px;
-      height: 56px;
-      border-radius: 8px;
-      border: 2px solid #f7b733;
-      object-fit: contain;
-      box-shadow: 0 0 6px #f7b733;
-    }
-    .deck .card:hover {
-      transform: scale(1.1);
-      box-shadow: 0 0 12px #ffd54f;
-    }
-    .deck .card-name {
-      font-size: 0.75rem;
-      margin-top: 4px;
-      color: #fff;
-      user-select: none;
-    }
-
-    /* === Card Library === */
-    #cardLibrary {
-      background: rgba(0,0,0,0.6);
-      padding: 1rem;
-      border-radius: 12px;
-      box-shadow: 0 0 10px #f7b733;
-    }
-    #cardLibrary h2 {
-      margin-top: 0;
-      color: #ffd54f;
-      text-shadow: 0 0 6px #ffd54f;
-      user-select: none;
-    }
-    #searchCardInput {
-      width: 100%;
-      padding: 0.6rem 1rem;
-      border-radius: 10px;
-      border: 2px solid #f7b733;
-      font-size: 1rem;
-      outline: none;
-      margin-bottom: 1rem;
-      color: #111;
-      font-weight: 600;
-    }
-    #cardList {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      max-height: 400px;
-      overflow-y: auto;
-    }
-    #cardList .card {
-      width: 70px;
-      text-align: center;
-      cursor: pointer;
-    }
-    #cardList .card img {
-      width: 70px;
-      height: 70px;
-      border-radius: 10px;
-      border: 2px solid #f7b733;
-      object-fit: contain;
-      box-shadow: 0 0 6px #f7b733;
-    }
-    #cardList .card-name {
-      font-size: 0.75rem;
-      margin-top: 4px;
-      color: #fff;
-      user-select: none;
-    }
-    #cardList .card:hover {
-      transform: scale(1.1);
-      box-shadow: 0 0 12px #ffd54f;
-      transition: transform 0.2s ease;
-    }
-
-    /* === Card Info Modal === */
-    #cardInfoModal {
-      position: fixed;
-      top: 0; left: 0; right:0; bottom: 0;
-      background: rgba(0,0,0,0.85);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s ease;
-    }
-    #cardInfoModal.active {
-      opacity: 1;
-      pointer-events: all;
-    }
-    #cardInfoContent {
-      background: #222;
-      border: 3px solid #f7b733;
-      border-radius: 15px;
+      color: #eee;
+      margin: 0;
       padding: 20px;
-      max-width: 400px;
-      width: 90%;
-      box-shadow: 0 0 15px #f7b733;
-      position: relative;
-      color: #ffd54f;
-      font-weight: 600;
     }
-    #cardInfoContent img {
-      width: 120px;
-      height: 120px;
-      border-radius: 12px;
-      border: 3px solid #ffd54f;
-      object-fit: contain;
-      display: block;
-      margin: 0 auto 15px auto;
-    }
-    #cardInfoContent h3 {
+    header {
       text-align: center;
-      margin: 0 0 1rem 0;
-      font-size: 1.8rem;
-      color: #ffd54f;
-      text-shadow: 0 0 10px #ffd54f;
+      margin-bottom: 40px;
     }
-    #cardInfoContent p {
-      margin: 0.5rem 0;
-      font-size: 1rem;
-      color: #fff;
-      font-weight: 400;
+    h1 {
+      font-weight: bold;
     }
-    #cardInfoClose {
-      position: absolute;
-      top: 10px;
-      right: 15px;
-      font-size: 1.5rem;
+    main {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .button {
+      background: #4caf50;
+      padding: 10px 20px;
+      border: none;
+      color: white;
       cursor: pointer;
-      color: #ffd54f;
-      font-weight: 700;
-      user-select: none;
-   
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Deck AI</h1>
+    <p>Your AI-powered deck analysis and generation tool</p>
+  </header>
+
+  <main>
+    <button class="button">Generate Deck</button>
+    <p>More features coming soon!</p>
+  </main>
+</body>
+</html>
