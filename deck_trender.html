@@ -35,14 +35,14 @@
       margin: auto;
       padding: 2rem;
     }
-    .deck, .trending, .evos {
+    .deck, .trending, .evos, .info {
       background-color: #2c2c2c;
       padding: 1rem;
       margin-bottom: 2rem;
       border-radius: 10px;
       box-shadow: 0 0 10px #ff6600;
     }
-    .deck h3, .trending h3, .evos h3 {
+    .deck h3, .trending h3, .evos h3, .info h3 {
       color: #ff6600;
     }
     .cards {
@@ -51,17 +51,29 @@
       gap: 10px;
       margin-top: 1rem;
     }
-    .cards img {
+    .card {
+      text-align: center;
+      width: 80px;
+    }
+    .card img {
       width: 60px;
       height: 60px;
       border-radius: 8px;
       border: 2px solid #ff6600;
       object-fit: cover;
     }
+    .card-name {
+      font-size: 0.8rem;
+      margin-top: 4px;
+    }
     .meta {
       margin-top: 1rem;
       font-size: 0.9rem;
       color: #ccc;
+    }
+    .info p {
+      font-size: 0.9rem;
+      line-height: 1.5;
     }
   </style>
 </head>
@@ -79,7 +91,8 @@
   <div class="content">
     <div id="trendingContainer"></div>
     <div id="trendingCards" class="trending"></div>
-    <div id="evoCards" class="evos"></div>
+    <div id="bestEvos" class="evos"></div>
+    <div id="evoInfo" class="info"></div>
   </div>
 
   <script>
@@ -102,19 +115,47 @@
         cards: ["Hog Rider", "Earthquake", "Cannon", "Musketeer", "Ice Spirit", "Skeletons", "Log", "Knight"],
         bestCards: ["Hog Rider", "Earthquake"],
         evos: ["Hog Rider"]
+      },
+      {
+        name: "Baby Dragon Splash",
+        cards: ["Baby Dragon", "Tornado", "Ice Wizard", "Barbarrel", "Nado", "Knight", "Cage", "Poison"],
+        bestCards: ["Baby Dragon", "Tornado"],
+        evos: ["Baby Dragon"]
+      },
+      {
+        name: "Vine Trap Control",
+        cards: ["Vine", "Poison", "Tornado", "Miner", "Cannon Cart", "Ice Spirit", "Bats", "Skeletons"],
+        bestCards: ["Vine", "Miner"],
+        evos: ["Vine"]
       }
     ];
 
-    // === Helper: Get Image URL ===
+    const evoDescriptions = {
+      "Miner": "Evolved Miner throws mini TNT on arrival, causing area damage.",
+      "Wall Breakers": "Evolved Wall Breakers split into 3 smaller ones on impact.",
+      "Royal Giant": "Evolved Royal Giant shoots explosive cannonballs every few shots.",
+      "Hog Rider": "Evolved Hog stuns buildings with every fourth hit.",
+      "Baby Dragon": "Evolved Baby Dragon leaves burning fire on the ground after hitting.",
+      "Vine": "The Vine Card snares and pulls units into its zone, stunning briefly."
+    };
+
     function getCardImage(cardName) {
       const formatted = cardName
         .toLowerCase()
         .replace(/[\s\.']/g, '-')
-        .replace(/é/g, 'e'); // handles "Musketeer" and others
+        .replace(/é/g, 'e');
       return `https://royaleapi.github.io/cr-api-assets/cards/${formatted}.png`;
     }
 
-    // === Render Decks ===
+    function createCardHTML(cardName) {
+      return `
+        <div class="card">
+          <img src="${getCardImage(cardName)}" alt="${cardName}" title="${cardName}" />
+          <div class="card-name">${cardName}</div>
+        </div>
+      `;
+    }
+
     function renderTrendingDecks() {
       const container = document.getElementById('trendingContainer');
       container.innerHTML = '<h3>🔥 Best Decks</h3>';
@@ -125,15 +166,14 @@
         deckDiv.innerHTML = `
           <h3>${deck.name}</h3>
           <div class="cards">
-            ${deck.cards.map(card => `<img src="${getCardImage(card)}" alt="${card}" title="${card}" />`).join('')}
+            ${deck.cards.map(card => createCardHTML(card)).join('')}
           </div>
-          <div class="meta">Top Cards in This Deck: ${deck.bestCards.join(', ')}</div>
+          <div class="meta">Top Cards: ${deck.bestCards.join(', ')}</div>
         `;
         container.appendChild(deckDiv);
       });
     }
 
-    // === Render Most Trending Cards ===
     function renderTrendingCards() {
       const cardCount = {};
 
@@ -146,38 +186,48 @@
       const sorted = Object.entries(cardCount).sort((a, b) => b[1] - a[1]);
 
       const container = document.getElementById('trendingCards');
-      container.innerHTML = `
-        <h3>🏆 Best Cards (Most Used)</h3>
-        <div class="cards">
-          ${sorted.map(([card, count]) =>
-            `<img src="${getCardImage(card)}" alt="${card}" title="${card} - Used in ${count} decks" />`
-          ).join('')}
-        </div>
-      `;
+      container.innerHTML = '<h3>🏆 Best Cards (Most Used)</h3><div class="cards">';
+      sorted.forEach(([card]) => {
+        container.innerHTML += createCardHTML(card);
+      });
+      container.innerHTML += '</div>';
     }
 
-    // === Render Evolution Cards ===
-    function renderEvoCards() {
-      const evos = new Set();
+    function renderBestEvos() {
+      const evoMap = new Map();
+
       trendingDecks.forEach(deck => {
-        (deck.evos || []).forEach(card => evos.add(card));
+        deck.evos.forEach(card => {
+          evoMap.set(card, (evoMap.get(card) || 0) + 1);
+        });
       });
 
-      const container = document.getElementById('evoCards');
-      container.innerHTML = `
-        <h3>✨ Evolution Cards</h3>
-        <div class="cards">
-          ${Array.from(evos).map(card =>
-            `<img src="${getCardImage(card)}" alt="${card}" title="${card} (Evolution)" />`
-          ).join('')}
-        </div>
-      `;
+      const sorted = [...evoMap.entries()].sort((a, b) => b[1] - a[1]);
+
+      const container = document.getElementById('bestEvos');
+      container.innerHTML = '<h3>✨ Best Evolution Cards</h3><div class="cards">';
+      sorted.forEach(([card]) => {
+        container.innerHTML += createCardHTML(card);
+      });
+      container.innerHTML += '</div>';
     }
 
-    // === Initialize Rendering ===
+    function renderEvoInfo() {
+      const container = document.getElementById('evoInfo');
+      container.innerHTML = '<h3>📚 Evolution Card Info</h3>';
+
+      for (const [card, desc] of Object.entries(evoDescriptions)) {
+        container.innerHTML += `
+          <p><strong>${card} Evo:</strong> ${desc}</p>
+        `;
+      }
+    }
+
+    // Render All Sections
     renderTrendingDecks();
     renderTrendingCards();
-    renderEvoCards();
+    renderBestEvos();
+    renderEvoInfo();
   </script>
 </body>
 </html>
