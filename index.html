@@ -1,98 +1,103 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Trending Decks | Clash Royale — Card Details</title>
+  <meta charset="UTF-8">
+  <title>Best Decks by Arena | Clash Royale</title>
   <style>
-    body { margin:0; font-family:'Segoe UI',sans-serif; background:linear-gradient(to bottom right,#1a1a1a,#3a3a3a); color:#fff; }
-    nav, header { text-align:center; padding:1rem; }
-    nav { background:#111; box-shadow:0 0 10px #ff6600; }
-    nav a { color:#ff6600; margin:0 1rem; text-decoration:none; font-weight:bold; }
-    header h1 { font-size:2.5rem; color:#ff6600; }
-    .content { max-width:1000px; margin:2rem auto; padding:0 1rem; }
-    .deck, .trending, .evos, .info { background:#2c2c2c; padding:1rem; margin-bottom:2rem; border-radius:10px; box-shadow:0 0 10px #ff6600; }
-    .cards { display:flex; flex-wrap:wrap; gap:10px; margin-top:1rem; }
-    .card { text-align:center; width:80px; cursor:pointer; }
-    .card img { width:60px; height:60px; border-radius:8px; border:2px solid #ff6600; object-fit:cover; }
-    .card-name { font-size:0.8rem; margin-top:4px; }
-    .modal { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:#333; padding:1rem; border-radius:8px; box-shadow:0 0 15px #000; display:none; max-width:300px; width:90%; color:#fff; }
-    .modal h4 { margin-top:0; color:#ff6600; }
-    .modal p { margin:0.5rem 0; font-size:0.9rem; }
-    .modal button { margin-top:1rem; background:#ff6600; color:#000; border:none; padding:0.5rem; border-radius:5px; cursor:pointer; }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: url('https://i.imgur.com/yourChosenUrl.jpg') center/cover fixed;
+      color: #fff;
+    }
+    nav {
+      background: rgba(0,0,0,0.7);
+      padding: 1rem;
+      text-align: center;
+      box-shadow: 0 0 10px #ff6600;
+    }
+    nav a {
+      color: #ff6600;
+      margin: 0 1rem;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    header {
+      text-align: center;
+      padding: 3rem 1rem 1rem;
+      background: rgba(0,0,0,0.5);
+    }
+    header h1 { font-size: 2.5rem; color: #ff6600; }
+    .content { max-width: 1200px; margin: auto; padding: 2rem; background: rgba(0,0,0,0.5); }
+    .arena { margin-bottom: 3rem; padding-bottom: 2rem; border-bottom: 2px solid #ff6600; }
+    .arena h2 { color: #ff6600; }
+    .deck { margin-bottom: 2rem; }
+    .deck h3 { color: #ffd700; }
+    .cards { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 0.5rem; }
+    .card { text-align: center; width: 70px; }
+    .card img { width: 60px; height: 60px; border-radius: 5px; border: 2px solid #ffd700; object-fit: cover; }
+    .card-name { font-size: 0.75rem; margin-top: 4px; }
   </style>
 </head>
 <body>
-  <nav><a href="#">Trending Decks</a></nav>
-  <header><h1>Trending Decks — Click Card for Stats</h1></header>
-  <div class="content">
-    <div id="trendingContainer" class="deck"></div>
-    <div id="trendingCards" class="trending"></div>
-    <div id="bestEvos" class="evos"></div>
-    <div id="evoInfo" class="info"></div>
-  </div>
-  
-  <div id="cardModal" class="modal">
-    <h4 id="modalTitle"></h4>
-    <div id="modalBody"></div>
-    <button onclick="closeModal()">Close</button>
-  </div>
+  <nav><a href="#">Home</a><a href="#">Deck Guide</a></nav>
+  <header><h1>Best Decks for Each Arena</h1><p>Top 3 decks per arena—cards shown with names</p></header>
+  <div class="content" id="arenaContainer"></div>
 
   <script>
-    const trendingDecks = [
-      { name:"Miner Control", cards:["Miner","Poison","Wall Breakers","Bats"], bestCards:["Miner","Poison"], evos:["Miner"] },
-      { name:"Royal Giant Deck", cards:["Royal Giant","Hunter","Log","Skeletons"], bestCards:["Royal Giant","Hunter"], evos:["Royal Giant"] },
-      { name:"Baby Dragon Splash", cards:["Baby Dragon","Tornado","Ice Wizard"], bestCards:["Baby Dragon","Tornado"], evos:["Baby Dragon"] },
+    const arenas = [
+      // Example for Arena 1 — Goblin Stadium
+      {
+        id: 1,
+        name: 'Goblin Stadium',
+        decks: [
+          { name: 'Goblin Barrel Cycle', cards: ['Goblin Barrel', 'Zap', 'Goblin Cage', 'Skeletons', 'Minions', 'Ice Spirit', 'Log', 'Princess'] },
+          { name: 'Hog Goblins', cards: ['Hog Rider', 'Goblin Gang', 'Barbarrel', 'Zap', 'Bats', 'Ice Golem', 'Log', 'Fireball'] },
+          { name: 'Royal Hogs Rush', cards: ['Royal Hogs', 'Poison', 'Cannon', 'Bats', 'Skeletons', 'Ice Wizard', 'Log', 'Fireball'] },
+        ]
+      },
+      {
+        id: 11,
+        name: 'Electro Valley',
+        decks: [
+          { name: 'Miner Poison', cards: ['Miner', 'Poison', 'Electro Wizard', 'Log', 'Skeletons', 'Inferno Dragon', 'Zap', 'Mega Knight'] },
+          { name: 'Log Bait', cards: ['Princess', 'Goblin Barrel', 'Knight', 'Inferno Tower', 'Log', 'Skeletons', 'Ice Wizard', 'Miner'] },
+          { name: 'Royal Giant Beatdown', cards: ['Royal Giant', 'Hunter', 'Fisherman', 'Log', 'Skeletons', 'Ice Spirit', 'Zap', 'Fireball'] },
+        ]
+      },
+      // Add more arenas as needed up to Arena 23...
     ];
 
-    let cardStats = {};
-
-    // Fetch full stats JSON
-    fetch('https://royaleapi.github.io/cr-api-data/cards_stats.json')
-      .then(res => res.json())
-      .then(data => cardStats = data);
-
-    function getCardImage(name) {
-      return `https://royaleapi.github.io/cr-api-assets/cards/${name.toLowerCase().replace(/[\s\.']/g,'-')}.png`;
+    function getCardImg(name) {
+      const key = name.toLowerCase().replace(/[\s\.']/g, '-');
+      return `https://royaleapi.github.io/cr-api-assets/cards/${key}.png`;
     }
 
-    function createCardEl(name) {
-      const div = document.createElement('div');
-      div.className = 'card';
-      div.innerHTML = `<img src="${getCardImage(name)}" alt="${name}"/><div class="card-name">${name}</div>`;
-      div.onclick = () => showCardInfo(name);
-      return div;
+    function render() {
+      const container = document.getElementById('arenaContainer');
+      arenas.forEach(arena => {
+        const el = document.createElement('div');
+        el.className = 'arena';
+        el.innerHTML = `<h2>Arena ${arena.id}: ${arena.name}</h2>`;
+        arena.decks.forEach((deck, idx) => {
+          el.innerHTML += `
+            <div class="deck">
+              <h3>Deck ${idx + 1}: ${deck.name}</h3>
+              <div class="cards">
+                ${deck.cards.map(card => `
+                  <div class="card">
+                    <img src="${getCardImg(card)}" alt="${card}" />
+                    <div class="card-name">${card}</div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>`;
+        });
+        container.appendChild(el);
+      });
     }
 
-    function renderSection(id, title, cardsArray) {
-      const container = document.getElementById(id);
-      container.innerHTML = `<h3>${title}</h3><div class="cards">`;
-      cardsArray.forEach(name => container.innerHTML += createCardEl(name).outerHTML);
-      container.innerHTML += '</div>';
-    }
-
-    function showCardInfo(name) {
-      const stat = cardStats[name.toLowerCase()];
-      const modal = document.getElementById('cardModal');
-      modal.style.display = 'block';
-      document.getElementById('modalTitle').innerText = name;
-      document.getElementById('modalBody').innerHTML = stat
-        ? `<p><strong>Elixir:</strong> ${stat.elixir}</p>
-           <p><strong>HP:</strong> ${stat.hitpoints}</p>
-           <p><strong>Damage:</strong> ${stat.damage}</p>
-           <p><strong>Speed:</strong> ${stat.speed}</p>
-           <p><strong>Type:</strong> ${stat.type}</p>`
-        : '<p>Stats unavailable.</p>';
-    }
-
-    function closeModal() {
-      document.getElementById('cardModal').style.display = 'none';
-    }
-
-    // Render all sections
-    document.getElementById('trendingContainer').innerHTML = '';
-    renderSection('trendingContainer', '🔥 Best Decks', trendingDecks.flatMap(d => d.cards));
-    renderSection('trendingCards', '🏆 Most Used Cards', Array.from(new Set(trendingDecks.flatMap(d => d.cards))));
-    renderSection('bestEvos', '✨ Best Evolutions', Array.from(new Set(trendingDecks.flatMap(d => d.evos))));
+    render();
   </script>
 </body>
 </html>
