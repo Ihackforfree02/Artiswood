@@ -1,152 +1,167 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Deck Matcher | Clash Royale</title>
+  <meta charset="UTF-8">
+  <title>Trending Decks | Clash Royale</title>
   <style>
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(to bottom right, #1e1e2f, #3a3a5c);
-      color: #fff;
-    }
-    nav {
-      background-color: #222;
-      padding: 1rem;
-      text-align: center;
-      box-shadow: 0 0 10px #00c8ff;
-    }
-    nav a {
-      color: #00c8ff;
-      margin: 0 1rem;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    header {
-      text-align: center;
-      padding: 4rem 2rem 2rem;
-    }
-    header h1 {
-      font-size: 3rem;
-      color: #00c8ff;
-    }
-    .content {
-      max-width: 1000px;
-      margin: auto;
-      padding: 2rem;
-      background-color: rgba(0, 0, 0, 0.6);
-      border-radius: 10px;
-    }
-    select, button {
-      padding: 0.6rem;
-      font-size: 1rem;
-      margin-top: 1rem;
-      border-radius: 5px;
-      border: none;
-    }
-    select {
-      background-color: #333;
-      color: #00c8ff;
-    }
-    button {
-      background-color: #00c8ff;
-      color: #000;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    .deck {
-      margin-top: 2rem;
-      padding: 1rem;
-      background-color: #2c2c54;
-      border-radius: 8px;
-      box-shadow: 0 0 10px #00c8ff;
-    }
-    .deck h3 {
-      color: #00c8ff;
-    }
-    .cards {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 1rem;
-    }
-    .cards img {
-      width: 60px;
-      height: 60px;
-      border-radius: 8px;
-      border: 2px solid #00c8ff;
-    }
+    body { margin: 0; font-family: 'Segoe UI', sans-serif; background: linear-gradient(to bottom right, #1a1a1a, #3a3a3a); color: #fff; }
+    nav { background: #111; padding: 1rem; text-align: center; box-shadow: 0 0 10px #ff6600; }
+    nav a { color: #ff6600; margin: 0 1rem; text-decoration: none; font-weight: bold; }
+    header { text-align: center; padding: 3rem 1rem 1rem; }
+    header h1 { font-size: 2.5rem; color: #ff6600; }
+    .content { max-width: 1000px; margin: auto; padding: 2rem; }
+    .deck, .trending, .evos, .info, .deck-finder { background: #2c2c2c; padding: 1rem; margin-bottom: 2rem; border-radius: 10px; box-shadow: 0 0 10px #ff6600; }
+    h3 { color: #ff6600; }
+    .cards { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 1rem; }
+    .card { text-align: center; width: 80px; }
+    .card img { width: 60px; height: 60px; border-radius: 8px; border: 2px solid #ff6600; object-fit: cover; }
+    .card-name { font-size: 0.8rem; margin-top: 4px; }
+    .meta, .info p { font-size: 0.9rem; color: #ccc; margin: 0.5rem 0; }
+    input, select { padding: 0.5rem; border-radius: 5px; border: none; margin-right: 0.5rem; }
+    button { background: #ff6600; color: #000; border: none; padding: 0.5rem 1rem; border-radius: 5px; font-weight: bold; cursor: pointer; }
   </style>
 </head>
 <body>
-  <nav>
-    <a href="#">Home</a>
-    <a href="deck_trender.html">Trending Decks</a>
-  </nav>
-
-  <header>
-    <h1>Deck Matcher</h1>
-    <p>Select your arena and get the best decks with card previews</p>
-  </header>
-
+  <nav><a href="#">Home</a><a href="#">Trending Decks</a></nav>
+  <header><h1>Trending Decks</h1><p>🔥 Up to 10 decks, deck finder, and arena tips!</p></header>
   <div class="content">
-    <label for="arena">Choose Arena:</label>
-    <select id="arena">
-      <script>
-        for (let i = 1; i <= 28; i++) {
-          document.write(`<option value="${i}">Arena ${i}</option>`);
-        }
-      </script>
-    </select>
-    <br />
-    <button onclick="showDecks()">Show Decks</button>
-
-    <div id="deckContainer"></div>
+    <div class="deck-finder">
+      <h3>Find a Deck for Your Arena</h3>
+      <select id="arenaSelect">
+        <option value="">Select Arena</option>
+      </select>
+      <button onclick="findDeck()">Find Best Deck</button>
+      <div id="foundDeck" class="deck"></div>
+    </div>
+    <div id="trendingContainer"></div>
+    <div id="arenaInfo" class="info"></div>
+    <div id="trendingCards" class="trending"></div>
+    <div id="bestEvos" class="evos"></div>
+    <div id="evoInfo" class="info"></div>
   </div>
 
   <script>
-    const decks = {
-      "1": [
-        ["Giant", "Archers", "Bomber", "Mini P.E.K.K.A", "Arrows", "Knight", "Musketeer", "Fireball"],
-        ["Prince", "Goblin Barrel", "Baby Dragon", "Zap", "Skeleton Army", "Archers", "Bomber", "Mini P.E.K.K.A"]
-      ],
-      "2": [
-        ["Valkyrie", "Wizard", "Giant", "Goblin Gang", "Arrows", "Cannon", "Spear Goblins", "Fireball"],
-        ["Mini P.E.K.K.A", "Prince", "Zap", "Bomber", "Archers", "Knight", "Skeleton Army", "Fireball"]
-      ]
-      // Add decks for Arena 3–28 here
+    // Sample of 10 decks (one per arena)
+    const trendingDecks = [
+      { arena: 8, name:"Frozen Peak Miner", cards:["Miner","Freeze","Ice Spirit","Ice Golem","Log","Skeletons","Poison","Wall Breakers"], bestCards:["Miner","Freeze"], evos:["Miner"] },
+      { arena: 11, name:"Electro Valley Cycle", cards:["Miner","Log","Hunter","Fisherman","Skeletons","Ice Spirit","Hunter","Zap"], bestCards:["Hunter","Fisherman"], evos:["Hunter"] },
+      { arena: 15, name:"Miner Mine Hog", cards:["Hog Rider","Earthquake","Musketeer","Knight","Ice Spirit","Skeletons","Log","Cannon Cart"], bestCards:["Hog Rider","Earthquake"], evos:["Hog Rider"] },
+      { arena: 12, name:"Spooky Town Baby Dragon", cards:["Baby Dragon","Tornado","Ice Wizard","Cage","Poison","Knight","Firecracker","Graveyard"], bestCards:["Baby Dragon","Graveyard"], evos:["Baby Dragon"] },
+      { arena: 9, name:"Jungle Arena Poison Splash", cards:["Dark Prince","Goblin Giant","Poison","Skeleton Barrel","Inferno Dragon","Fire Spirit","Bats","Electro Spirit"], bestCards:["Dark Prince","Goblin Giant"], evos:[] },
+      { arena: 16, name:"Executioner’s Kitchen Runic Giant", cards:["Rune Giant","Executioner","Baby Dragon","Tornado","Log","Ice Spirit","Skeletons","Poison"], bestCards:["Rune Giant","Executioner"], evos:["Rune Giant"] },
+      { arena: 14, name:"Serenity Peak Drill", cards:["Goblin Drill","Night Witch","Executioner","Royal Delivery","Elixir Golem","Rage","Log","Fireball"], bestCards:["Goblin Drill","Night Witch"], evos:[] },
+      { arena: 17, name:"Royal Crypt Archer Deck", cards:["Archer Queen","Mighty Miner","Goblin Cage","Rascals","Bowler","Magic Archer","Firecracker","Heal Spirit"], bestCards:["Archer Queen","Magic Archer"], evos:["Archer Queen"] },
+      { arena: 10, name:"Hog Mountain Elite", cards:["Elite Barbarians","Hog Rider","Tesla","Zappies","Golem","Hunter","Minion Horde","Furnace"], bestCards:["Elite Barbarians","Hog Rider"], evos:[] },
+      { arena: 13, name:"Rascal’s Hideout Electro Giant", cards:["Electro Giant","Bandit","Bowler","Magic Archer","Rascals","Heal Spirit","Lava Hound","Minions"], bestCards:["Electro Giant","Magic Archer"], evos:["Electro Giant"] }
+    ];
+
+    const arenaUnlocks = {
+      8: "Unlocks Freeze, Ice Golem, Ice Spirit (Frozen Peak)",
+      9: "Unlocks Poison, Skeleton Barrel, Inferno Dragon",
+      10: "Unlocks Elite Barbarians, Hunter, Golem (Hog Mountain)",
+      11: "Unlocks Miner, Log, Electro Wizard (Electro Valley)",
+      12: "Unlocks Baby Dragon Evo, Graveyard (Spooky Town)",
+      13: "Unlocks Electro Giant, Magic Archer (Rascal’s Hideout)",
+      14: "Unlocks Goblin Drill, Night Witch",
+      15: "Unlocks Mirror, Tornado, Cannon Cart",
+      16: "Unlocks Rune Giant, Golden Knight, Skeleton King",
+      17: "Unlocks Archer Queen, Mighty Miner"
     };
 
-    function getCardImage(cardName) {
-      const formatted = cardName.toLowerCase().replace(/[\s\.']/g, '-');
-      return `https://royaleapi.com/images/cards/${formatted}.png`;
+    // Evo descriptions with in-game details + leak history
+    const evoDescriptions = {
+      "Baby Dragon": `Evolved Baby Dragon (Sept 2025): slows enemies by 30%, speeds allies by 50%, splash damage. Leaked during maintenance glitch Aug 2025. :contentReference[oaicite:1]{index=1}`,
+      "Miner": "Evo Miner drops mini TNT upon arrival (area damage).",
+      "Hog Rider": "Evo Hog Rider stuns buildings every 4th hit.",
+      "Hunter": "Evo Hunter's close shots destroy shields and deal splash behind.",
+      "Rune Giant": "Evo Rune Giant buffs nearby troops every 3rd swing.",
+      "Archer Queen": "Evo Archer Queen deploys poison trap on death."
+    };
+
+    function getCardImage(card) {
+      const key = card.toLowerCase().replace(/[\s\.']/g,'-').replace(/é/g,'e');
+      return `https://royaleapi.github.io/cr-api-assets/cards/${key}.png`;
+    }
+    function createCardHTML(card) {
+      return `<div class="card"><img src="${getCardImage(card)}" alt="${card}" /><div class="card-name">${card}</div></div>`;
     }
 
-    function showDecks() {
-      const arena = document.getElementById('arena').value;
-      const container = document.getElementById('deckContainer');
-      container.innerHTML = '';
-
-      if (decks[arena]) {
-        decks[arena].forEach((deck, index) => {
-          const deckDiv = document.createElement('div');
-          deckDiv.className = 'deck';
-          deckDiv.innerHTML = `<h3>Deck ${index + 1}</h3><div class="cards"></div>`;
-          const cardContainer = deckDiv.querySelector('.cards');
-
-          deck.forEach(card => {
-            const img = document.createElement('img');
-            img.src = getCardImage(card);
-            img.alt = card;
-            cardContainer.appendChild(img);
-          });
-
-          container.appendChild(deckDiv);
-        });
-      } else {
-        container.innerHTML = '<p>No decks available for this arena yet.</p>';
-      }
+    function renderDecks() {
+      const c = document.getElementById('trendingContainer');
+      c.innerHTML = '<h3>🔥 Top Decks (Max 10)</h3>';
+      trendingDecks.forEach(deck => {
+        const div = document.createElement('div');
+        div.className = 'deck';
+        div.innerHTML = `<h3>Arena ${deck.arena}: ${deck.name}</h3>
+          <div class="cards">${deck.cards.map(createCardHTML).join('')}</div>
+          <div class="meta">Top Cards: ${deck.bestCards.join(', ')}</div>`;
+        c.appendChild(div);
+      });
     }
+
+    function populateArenaSelect() {
+      const sel = document.getElementById('arenaSelect');
+      trendingDecks.forEach(d => {
+        const opt = document.createElement('option');
+        opt.value = d.arena;
+        opt.text = `Arena ${d.arena}`;
+        sel.add(opt);
+      });
+    }
+
+    function findDeck() {
+      const val = +document.getElementById('arenaSelect').value;
+      const deck = trendingDecks.find(d => d.arena === val);
+      const c = document.getElementById('foundDeck');
+      if (!deck) return c.innerHTML = '<p>No deck found for that arena.</p>';
+      c.innerHTML = `<h3>Deck for Arena ${deck.arena}: ${deck.name}</h3>
+        <div class="cards">${deck.cards.map(createCardHTML).join('')}</div>
+        <div class="meta">Top Cards: ${deck.bestCards.join(', ')}</div>`;
+    }
+
+    function renderArenaInfo() {
+      const c = document.getElementById('arenaInfo');
+      c.innerHTML = '<h3> Arena Unlock Info</h3>';
+      Object.entries(arenaUnlocks).forEach(([arena, info]) => {
+        c.innerHTML += `<p><strong>Arena ${arena}:</strong> ${info}</p>`;
+      });
+    }
+
+    function renderBestCards() {
+      const freq = {};
+      trendingDecks.forEach(d => d.cards.forEach(card => freq[card] = (freq[card]||0) +1));
+      const sorted = Object.entries(freq).sort((a,b) => b[1]-a[1]);
+      const c = document.getElementById('trendingCards');
+      c.innerHTML = '<h3>🏆 Best Cards (Most Used)</h3><div class="cards">';
+      sorted.forEach(([card]) => c.innerHTML += createCardHTML(card));
+      c.innerHTML += '</div>';
+    }
+
+    function renderBestEvos() {
+      const freq = {};
+      trendingDecks.forEach(d => d.evos.forEach(e => freq[e] = (freq[e]||0)+1));
+      const sorted = Object.entries(freq).sort((a,b)=>b[1]-a[1]);
+      const c = document.getElementById('bestEvos');
+      c.innerHTML = '<h3>✨ Best Evo Cards</h3><div class="cards">';
+      sorted.forEach(([card]) => c.innerHTML += createCardHTML(card));
+      c.innerHTML += '</div>';
+    }
+
+    function renderEvoInfo() {
+      const c = document.getElementById('evoInfo');
+      c.innerHTML = '<h3>📚 Evo Details & Leaks</h3>';
+      Object.entries(evoDescriptions).forEach(([card, desc]) => {
+        c.innerHTML += `<p><strong>${card} Evo:</strong> ${desc}</p>`;
+      });
+    }
+
+    // Init
+    renderDecks();
+    populateArenaSelect();
+    renderArenaInfo();
+    renderBestCards();
+    renderBestEvos();
+    renderEvoInfo();
   </script>
 </body>
 </html>
