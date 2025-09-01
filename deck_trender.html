@@ -4,90 +4,25 @@
   <meta charset="UTF-8" />
   <title>Trending Decks | Clash Royale</title>
   <style>
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(to bottom right, #1a1a1a, #3a3a3a);
-      color: #fff;
-    }
-    nav {
-      background-color: #111;
-      padding: 1rem;
-      text-align: center;
-      box-shadow: 0 0 10px #ff6600;
-    }
-    nav a {
-      color: #ff6600;
-      margin: 0 1rem;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    header {
-      text-align: center;
-      padding: 4rem 2rem 2rem;
-    }
-    header h1 {
-      font-size: 3rem;
-      color: #ff6600;
-    }
-    .content {
-      max-width: 1000px;
-      margin: auto;
-      padding: 2rem;
-    }
-    .deck, .trending, .evos, .info {
-      background-color: #2c2c2c;
-      padding: 1rem;
-      margin-bottom: 2rem;
-      border-radius: 10px;
-      box-shadow: 0 0 10px #ff6600;
-    }
-    .deck h3, .trending h3, .evos h3, .info h3 {
-      color: #ff6600;
-    }
-    .cards {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 1rem;
-    }
-    .card {
-      text-align: center;
-      width: 80px;
-    }
-    .card img {
-      width: 60px;
-      height: 60px;
-      border-radius: 8px;
-      border: 2px solid #ff6600;
-      object-fit: cover;
-    }
-    .card-name {
-      font-size: 0.8rem;
-      margin-top: 4px;
-    }
-    .meta {
-      margin-top: 1rem;
-      font-size: 0.9rem;
-      color: #ccc;
-    }
-    .info p {
-      font-size: 0.9rem;
-      line-height: 1.5;
-    }
+    body { margin:0; font-family:'Segoe UI',sans-serif; background:linear-gradient(to bot right,#1a1a1a,#3a3a3a); color:#fff; }
+    nav { background:#111; padding:1rem; text-align:center; box-shadow:0 0 10px #ff6600; }
+    nav a{color:#ff6600;margin:0 1rem;text-decoration:none;font-weight:bold;}
+    header{text-align:center;padding:4rem 2rem 2rem;}
+    header h1{font-size:3rem;color:#ff6600;}
+    .content{max-width:1000px;margin:auto;padding:2rem;}
+    .deck, .trending, .evos, .info {background:#2c2c2c;padding:1rem;margin-bottom:2rem;border-radius:10px;box-shadow:0 0 10px #ff6600;}
+    .deck h3, .trending h3, .evos h3, .info h3{color:#ff6600;}
+    .cards{display:flex;flex-wrap:wrap;gap:10px;margin-top:1rem;}
+    .card{text-align:center;width:80px;}
+    .card img{width:60px;height:60px;border-radius:8px;border:2px solid #ff6600;object-fit:cover;}
+    .card-name{font-size:0.8rem;margin-top:4px;}
+    .meta{margin-top:1rem;font-size:0.9rem;color:#ccc;}
+    .info p{font-size:0.9rem;line-height:1.5;}
   </style>
 </head>
 <body>
-  <nav>
-    <a href="index.html">Home</a>
-    <a href="#">Trending Decks</a>
-  </nav>
-
-  <header>
-    <h1>Trending Decks</h1>
-    <p>🔥 Vote for your favorite decks and explore top cards + evolutions</p>
-  </header>
-
+  <nav><a href="index.html">Home</a><a href="#">Trending Decks</a></nav>
+  <header><h1>Trending Decks</h1><p>🔥 Vote for your favorite decks and explore top cards & evolutions</p></header>
   <div class="content">
     <div id="trendingContainer"></div>
     <div id="trendingCards" class="trending"></div>
@@ -96,134 +31,68 @@
   </div>
 
   <script>
-    // === Trending Decks Data ===
     const trendingDecks = [
-      {
-        name: "Miner Control",
-        cards: ["Miner", "Poison", "Wall Breakers", "Bomb Tower", "Bats", "Log", "Skeletons", "Ice Spirit"],
-        bestCards: ["Miner", "Poison"],
-        evos: ["Miner", "Wall Breakers"]
-      },
-      {
-        name: "Royal Giant Cycle",
-        cards: ["Royal Giant", "Fisherman", "Hunter", "Log", "Skeletons", "Ice Spirit", "Cannon", "Fireball"],
-        bestCards: ["Royal Giant", "Hunter"],
-        evos: ["Royal Giant"]
-      },
-      {
-        name: "Hog EQ Cycle",
-        cards: ["Hog Rider", "Earthquake", "Cannon", "Musketeer", "Ice Spirit", "Skeletons", "Log", "Knight"],
-        bestCards: ["Hog Rider", "Earthquake"],
-        evos: ["Hog Rider"]
-      },
-      {
-        name: "Baby Dragon Splash",
-        cards: ["Baby Dragon", "Tornado", "Ice Wizard", "Barbarrel", "Nado", "Knight", "Cage", "Poison"],
-        bestCards: ["Baby Dragon", "Tornado"],
-        evos: ["Baby Dragon"]
-      },
-      {
-        name: "Vine Trap Control",
-        cards: ["Vine", "Poison", "Tornado", "Miner", "Cannon Cart", "Ice Spirit", "Bats", "Skeletons"],
-        bestCards: ["Vine", "Miner"],
-        evos: ["Vine"]
-      }
+      { name:"Miner Control", cards:["Miner","Poison","Wall Breakers","Bomb Tower","Bats","Log","Skeletons","Ice Spirit"], bestCards:["Miner","Poison"], evos:["Miner","Wall Breakers"] },
+      { name:"Royal Giant Cycle", cards:["Royal Giant","Fisherman","Hunter","Log","Skeletons","Ice Spirit","Cannon","Fireball"], bestCards:["Royal Giant","Hunter"], evos:["Royal Giant"] },
+      { name:"Hog EQ Cycle", cards:["Hog Rider","Earthquake","Cannon","Musketeer","Ice Spirit","Skeletons","Log","Knight"], bestCards:["Hog Rider","Earthquake"], evos:["Hog Rider"] },
+      { name:"Baby Dragon Splash", cards:["Baby Dragon","Tornado","Ice Wizard","Barbarrel","Nado","Knight","Cage","Poison"], bestCards:["Baby Dragon","Tornado"], evos:["Baby Dragon"] },
+      { name:"Vine Trap Control", cards:["Vine","Poison","Tornado","Miner","Cannon Cart","Ice Spirit","Bats","Skeletons"], bestCards:["Vine","Miner"], evos:["Vine"] }
     ];
 
     const evoDescriptions = {
-      "Miner": "Evolved Miner throws mini TNT on arrival, causing area damage.",
-      "Wall Breakers": "Evolved Wall Breakers split into 3 smaller ones on impact.",
-      "Royal Giant": "Evolved Royal Giant shoots explosive cannonballs every few shots.",
-      "Hog Rider": "Evolved Hog stuns buildings with every fourth hit.",
-      "Baby Dragon": "Evolved Baby Dragon leaves burning fire on the ground after hitting.",
-      "Vine": "The Vine Card snares and pulls units into its zone, stunning briefly."
+      "Miner": "Evolved Miner drops mini TNT on arrival, dealing area damage.",
+      "Wall Breakers": "Evo Wall Breakers split into 3 mini ones on impact.",
+      "Royal Giant": "Evo Royal Giant shoots explosive cannonballs.",
+      "Hog Rider": "Evo Hog Rider stuns buildings with every 4th hit.",
+      "Baby Dragon": `Evo Baby Dragon (released 1 Sep 2025) slows enemies' movement by 30% while speeding up allies by 50%, and launches powerful splash attacks. :contentReference[oaicite:4]{index=4}`,
+      "Vine": `Vines is a new 3‑Elixir Epic spell (added Season 75, Sep 2025). It freezes the 3 highest‑HP troops in a small radius for 2.5s and allows ground units to hit them. :contentReference[oaicite:5]{index=5}`
     };
 
-    function getCardImage(cardName) {
-      const formatted = cardName
-        .toLowerCase()
-        .replace(/[\s\.']/g, '-')
-        .replace(/é/g, 'e');
-      return `https://royaleapi.github.io/cr-api-assets/cards/${formatted}.png`;
+    // Image fallback for missing links
+    function getCardImage(card) {
+      const key = card.toLowerCase().replace(/[\s\.']/g,'-');
+      return `https://royaleapi.github.io/cr-api-assets/cards/${key}.png`;
     }
-
-    function createCardHTML(cardName) {
-      return `
-        <div class="card">
-          <img src="${getCardImage(cardName)}" alt="${cardName}" title="${cardName}" />
-          <div class="card-name">${cardName}</div>
-        </div>
-      `;
+    function createCardHTML(card) {
+      return `<div class="card"><img src="${getCardImage(card)}" alt="${card}" title="${card}"/><div class="card-name">${card}</div></div>`;
     }
 
     function renderTrendingDecks() {
-      const container = document.getElementById('trendingContainer');
-      container.innerHTML = '<h3>🔥 Best Decks</h3>';
-
-      trendingDecks.forEach(deck => {
-        const deckDiv = document.createElement('div');
-        deckDiv.className = 'deck';
-        deckDiv.innerHTML = `
-          <h3>${deck.name}</h3>
-          <div class="cards">
-            ${deck.cards.map(card => createCardHTML(card)).join('')}
-          </div>
-          <div class="meta">Top Cards: ${deck.bestCards.join(', ')}</div>
-        `;
-        container.appendChild(deckDiv);
+      const c=document.getElementById('trendingContainer');
+      c.innerHTML='<h3>🔥 Best Decks</h3>';
+      trendingDecks.forEach(d=>{
+        const div=document.createElement('div');
+        div.className='deck';
+        div.innerHTML=`<h3>${d.name}</h3><div class="cards">${d.cards.map(createCardHTML).join('')}</div><div class="meta">Top Cards: ${d.bestCards.join(', ')}</div>`;
+        c.appendChild(div);
       });
     }
-
-    function renderTrendingCards() {
-      const cardCount = {};
-
-      trendingDecks.forEach(deck => {
-        deck.cards.forEach(card => {
-          cardCount[card] = (cardCount[card] || 0) + 1;
-        });
-      });
-
-      const sorted = Object.entries(cardCount).sort((a, b) => b[1] - a[1]);
-
-      const container = document.getElementById('trendingCards');
-      container.innerHTML = '<h3>🏆 Best Cards (Most Used)</h3><div class="cards">';
-      sorted.forEach(([card]) => {
-        container.innerHTML += createCardHTML(card);
-      });
-      container.innerHTML += '</div>';
+    function renderTrendingCards(){
+      const cnt={};
+      trendingDecks.forEach(d=>d.cards.forEach(c=>cnt[c]=(cnt[c]||0)+1));
+      const sorted=Object.entries(cnt).sort((a,b)=>b[1]-a[0]);
+      const c=document.getElementById('trendingCards');
+      c.innerHTML='<h3>🏆 Best Cards (Most Used)</h3><div class="cards">';
+      sorted.forEach(([card])=>c.innerHTML+=createCardHTML(card));
+      c.innerHTML+='</div>';
     }
-
-    function renderBestEvos() {
-      const evoMap = new Map();
-
-      trendingDecks.forEach(deck => {
-        deck.evos.forEach(card => {
-          evoMap.set(card, (evoMap.get(card) || 0) + 1);
-        });
-      });
-
-      const sorted = [...evoMap.entries()].sort((a, b) => b[1] - a[1]);
-
-      const container = document.getElementById('bestEvos');
-      container.innerHTML = '<h3>✨ Best Evolution Cards</h3><div class="cards">';
-      sorted.forEach(([card]) => {
-        container.innerHTML += createCardHTML(card);
-      });
-      container.innerHTML += '</div>';
+    function renderBestEvos(){
+      const m=new Map();
+      trendingDecks.forEach(d=>d.evos.forEach(e=>m.set(e,(m.get(e)||0)+1)));
+      const sorted=[...m.entries()].sort((a,b)=>b[1]-a[1]);
+      const c=document.getElementById('bestEvos');
+      c.innerHTML='<h3>✨ Best Evo Cards</h3><div class="cards">';
+      sorted.forEach(([card])=>c.innerHTML+=createCardHTML(card));
+      c.innerHTML+='</div>';
     }
-
-    function renderEvoInfo() {
-      const container = document.getElementById('evoInfo');
-      container.innerHTML = '<h3>📚 Evolution Card Info</h3>';
-
-      for (const [card, desc] of Object.entries(evoDescriptions)) {
-        container.innerHTML += `
-          <p><strong>${card} Evo:</strong> ${desc}</p>
-        `;
+    function renderEvoInfo(){
+      const c=document.getElementById('evoInfo');
+      c.innerHTML='<h3>📚 Evo & Leak Info</h3>';
+      for(const [card,desc] of Object.entries(evoDescriptions)){
+        c.innerHTML+=`<p><strong>${card} Evo:</strong> ${desc}</p>`;
       }
     }
 
-    // Render All Sections
     renderTrendingDecks();
     renderTrendingCards();
     renderBestEvos();
