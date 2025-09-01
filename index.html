@@ -1,111 +1,198 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Art is Wood | Timeless Wooden Creations</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <title>DeckForge | Clash Royale Deck Matcher</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Lora:wght@400;600&display=swap');
-
-    body {
+    html, body {
       margin: 0;
-      font-family: 'Lora', serif;
-      background-color: #fdf6eb; /* Creamy background */
-      color: #2e2e2e;
-      line-height: 1.6;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: radial-gradient(circle at top, #1f1c2c, #928dab);
+      color: #f0f0f0;
+      overflow-x: hidden;
+    }
+
+    nav {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background-color: #2c2c54;
+      display: flex;
+      justify-content: center;
+      padding: 1rem 0;
+      z-index: 1000;
+      box-shadow: 0 0 10px #00f2ff;
+    }
+
+    nav a {
+      color: #00f2ff;
+      text-decoration: none;
+      margin: 0 2rem;
+      font-size: 1rem;
+      font-weight: 600;
+      transition: color 0.3s;
+    }
+
+    nav a:hover {
+      color: #ffffff;
     }
 
     header {
-      padding: 60px 20px 30px;
       text-align: center;
+      padding: 6rem 2rem 2rem;
+      background: url('https://static.wikia.nocookie.net/clashroyale/images/7/7e/Arena_7.png') center/cover no-repeat;
+      color: #fff;
+      text-shadow: 0 0 10px #000;
     }
 
-    .title-box {
-      display: inline-block;
-      padding: 20px 40px;
-      border: 3px solid #000;
-      background-color: #fffdfa;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
-
-    .title-box h1 {
-      margin: 0;
-      font-size: 3.2em;
-      font-weight: 700;
-      color: #000;
-      letter-spacing: 1.5px;
+    header h1 {
+      font-size: 4rem;
+      margin-bottom: 0.5rem;
     }
 
     header p {
-      margin-top: 20px;
-      font-size: 1.1em;
-      color: #5c4937;
+      font-size: 1.2rem;
+      color: #e0e0ff;
     }
 
-    .intro {
+    .content {
       max-width: 900px;
-      margin: 60px auto;
-      padding: 0 20px;
-      font-size: 1.15em;
+      margin: 2rem auto;
+      padding: 2rem;
+      background-color: rgba(0, 0, 0, 0.6);
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0, 242, 255, 0.3);
     }
 
-    .intro p {
-      margin-bottom: 20px;
+    .content h2 {
+      color: #00f2ff;
+      margin-top: 2rem;
+      text-shadow: 0 0 5px #00f2ff;
     }
 
-    .game-section {
-      background-color: #f2e9dc;
-      padding: 60px 20px;
-      text-align: center;
+    .content p, .content ul {
+      font-size: 1rem;
+      line-height: 1.6;
     }
 
-    .game-section h2 {
-      font-size: 2em;
-      margin-bottom: 30px;
-      color: #4e3c26;
+    .arena-selector {
+      margin: 2rem 0;
     }
 
-    .game-section iframe {
-      width: 90%;
-      max-width: 960px;
-      height: 640px;
+    select {
+      padding: 0.5rem;
+      font-size: 1rem;
+      border-radius: 5px;
       border: none;
-      border-radius: 8px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      background-color: #2c2c54;
+      color: #00f2ff;
     }
 
-    footer {
-      background-color: #2b1d12;
-      color: #d7cec7;
-      text-align: center;
-      padding: 30px 20px;
-      font-size: 0.9em;
+    button {
+      margin-top: 1rem;
+      padding: 0.7rem 1.5rem;
+      font-size: 1rem;
+      background-color: #00f2ff;
+      color: #2c2c54;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #00c3cc;
+    }
+
+    .deck-result {
+      margin-top: 2rem;
+      padding: 1rem;
+      background-color: #1a1a2e;
+      border-radius: 8px;
+      box-shadow: 0 0 10px #00f2ff;
+    }
+
+    .deck-result h3 {
+      color: #00f2ff;
+      margin-bottom: 0.5rem;
+    }
+
+    .deck-result ul {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .deck-result li {
+      background-color: #2c2c54;
+      margin: 0.3rem 0;
+      padding: 0.5rem;
+      border-radius: 5px;
     }
   </style>
 </head>
 <body>
+  <nav>
+    <a href="#">Home</a>
+    <a href="#match">Match My Deck</a>
+    <a href="#about">About</a>
+  </nav>
+
   <header>
-    <div class="title-box">
-      <h1>Art is Wood</h1>
-    </div>
-    <p>Timeless Craftsmanship. Naturally Inspired.</p>
+    <h1>DeckForge</h1>
+    <p>Forge your perfect Clash Royale deck based on your arena level</p>
   </header>
 
-  <main>
-    <section class="intro">
-      <p>Welcome to <strong>Art is Wood</strong>, where form meets function in a celebration of organic material. Our collection features exquisite wooden art, sculptural pieces, and thoughtfully designed heirlooms that honor the integrity of the grain and the hand of the maker.</p>
-      <p>Each creation embodies a balance of tradition and modernity — ideal for connoisseurs of design, interior stylists, and lovers of nature's finest medium.</p>
-    </section>
+  <div class="content" id="match">
+    <h2>🔍 Match My Deck</h2>
+    <p>Select your current arena to get a recommended deck tailored to your level and playstyle.</p>
 
-    <section class="game-section">
-      <h2>Take a Creative Break</h2>
-      <iframe src="https://amazingwebsitesupersigma.github.io/dogeminer/" allowfullscreen></iframe>
-    </section>
-  </main>
+    <div class="arena-selector">
+      <label for="arena">Choose Arena:</label>
+      <select id="arena">
+        <option value="1">Arena 1: Goblin Stadium</option>
+        <option value="5">Arena 5: Spell Valley</option>
+        <option value="10">Arena 10: Hog Mountain</option>
+        <option value="15">Arena 15: Legendary Arena</option>
+      </select>
+      <br>
+      <button onclick="matchDeck()">Find My Deck</button>
+    </div>
 
-  <footer>
-    <p>© 2025 Art is Wood — Designed for those who see beauty in the grain.</p>
-  </footer>
+    <div class="deck-result" id="deckResult" style="display:none;">
+      <h3>Recommended Deck</h3>
+      <ul id="deckList"></ul>
+    </div>
+  </div>
+
+  <div class="content" id="about">
+    <h2>🎯 About DeckForge</h2>
+    <p>DeckForge is your personal deck builder powered by strategy and synergy. Whether you're just starting out or battling in Legendary Arena, we help you dominate with optimized card combos and tactics.</p>
+  </div>
+
+  <script>
+    const decks = {
+      "1": ["Knight", "Archers", "Bomber", "Giant", "Mini P.E.K.K.A", "Arrows", "Fireball", "Musketeer"],
+      "5": ["Witch", "Valkyrie", "Zap", "Hog Rider", "Skeleton Army", "Inferno Tower", "Goblin Barrel", "Baby Dragon"],
+      "10": ["Mega Minion", "Electro Wizard", "Miner", "Poison", "Tornado", "Ice Spirit", "Cannon Cart", "Log"],
+      "15": ["Royal Ghost", "Bandit", "Magic Archer", "Ram Rider", "Lightning", "Barbarian Barrel", "Mother Witch", "Skeleton King"]
+    };
+
+    function matchDeck() {
+      const arena = document.getElementById('arena').value;
+      const deckList = document.getElementById('deckList');
+      const deckResult = document.getElementById('deckResult');
+
+      deckList.innerHTML = '';
+      decks[arena].forEach(card => {
+        const li = document.createElement('li');
+        li.textContent = card;
+        deckList.appendChild(li);
+      });
+
+      deckResult.style.display = 'block';
+    }
+  </script>
 </body>
 </html>
