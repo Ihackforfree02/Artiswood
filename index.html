@@ -1,16 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Clash Royale Deck Matcher</title>
   <style>
-    html, body {
+    body {
       margin: 0;
-      padding: 0;
       font-family: 'Segoe UI', sans-serif;
       background: url('https://wallpapercave.com/wp/wp4676572.jpg') center/cover no-repeat;
       color: #fff;
-      overflow-x: hidden;
     }
 
     nav {
@@ -31,7 +29,6 @@
       margin: 0 2rem;
       font-size: 1rem;
       font-weight: 600;
-      transition: color 0.3s;
     }
 
     nav a:hover {
@@ -46,7 +43,6 @@
 
     header h1 {
       font-size: 4rem;
-      margin-bottom: 0.5rem;
       color: #ffcc00;
       text-shadow: 0 0 10px #000;
     }
@@ -65,38 +61,30 @@
       box-shadow: 0 0 20px rgba(255, 204, 0, 0.3);
     }
 
-    .content h2 {
+    h2 {
       color: #ffcc00;
-      margin-top: 2rem;
       text-shadow: 0 0 5px #ffcc00;
     }
 
-    .arena-selector {
-      margin: 2rem 0;
-      text-align: center;
-    }
-
-    select {
+    select, button {
       padding: 0.7rem;
       font-size: 1rem;
       border-radius: 5px;
       border: none;
+      margin-top: 1rem;
+    }
+
+    select {
       background-color: #333;
       color: #ffcc00;
       box-shadow: 0 0 5px #ffcc00;
     }
 
     button {
-      margin-top: 1rem;
-      padding: 0.7rem 1.5rem;
-      font-size: 1rem;
       background-color: #ffcc00;
       color: #000;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
       font-weight: bold;
-      transition: background-color 0.3s;
+      cursor: pointer;
     }
 
     button:hover {
@@ -113,7 +101,6 @@
 
     .deck-result h3 {
       color: #ffcc00;
-      margin-bottom: 0.5rem;
     }
 
     .deck-result ul {
@@ -133,61 +120,63 @@
   <nav>
     <a href="#">Home</a>
     <a href="#match">Match My Deck</a>
+    <a href="deck_trender.html">Trending Decks</a>
   </nav>
 
   <header>
     <h1>Clash Royale Deck Matcher</h1>
-    <p>Get the best deck for your current arena — updated for the latest meta</p>
+    <p>Find the best decks for your arena — updated for the latest meta</p>
   </header>
 
   <div class="content" id="match">
     <h2>🏟️ Select Your Arena</h2>
-    <div class="arena-selector">
-      <select id="arena">
-        <option value="1">Arena 1: Goblin Stadium</option>
-        <option value="2">Arena 2: Bone Pit</option>
-        <option value="3">Arena 3: Barbarian Bowl</option>
-        <option value="4">Arena 4: P.E.K.K.A's Playhouse</option>
-        <option value="5">Arena 5: Spell Valley</option>
-        <option value="6">Arena 6: Builder's Workshop</option>
-        <option value="7">Arena 7: Royal Arena</option>
-        <option value="8">Arena 8: Frozen Peak</option>
-        <option value="9">Arena 9: Jungle Arena</option>
-        <option value="10">Arena 10: Hog Mountain</option>
-        <option value="11">Arena 11: Electro Valley</option>
-        <option value="12">Arena 12: Spooky Town</option>
-        <option value="13">Arena 13: Rascal's Hideout</option>
-        <option value="14">Arena 14: Serenity Peak</option>
-        <option value="15">Arena 15: Legendary Arena</option>
-        <option value="16">Arena 16: Champions Arena</option>
-        <option value="17">Arena 17: Ultimate Champion</option>
-        <option value="18">Arena 18: Grand Champion</option>
-        <option value="19">Arena 19: Royal Champion</option>
-        <option value="20">Arena 20: Legendary Champion</option>
-      </select>
-      <br>
-      <button onclick="matchDeck()">Find My Deck</button>
-    </div>
+    <select id="arena">
+      <script>
+        for (let i = 1; i <= 28; i++) {
+          document.write(`<option value="${i}">Arena ${i}</option>`);
+        }
+      </script>
+    </select>
+    <br />
+    <button onclick="matchDeck()">Find My Decks</button>
 
     <div class="deck-result" id="deckResult" style="display:none;">
-      <h3>Recommended Deck</h3>
+      <h3>Top Decks</h3>
       <ul id="deckList"></ul>
     </div>
   </div>
 
   <script>
     const decks = {
-      "1": ["Giant", "Archers", "Bomber", "Mini P.E.K.K.A", "Arrows", "Knight", "Musketeer", "Fireball"],
-      "2": ["Prince", "Baby Dragon", "Skeleton Army", "Goblin Barrel", "Mini P.E.K.K.A", "Zap", "Bomber", "Archers"],
-      "3": ["Valkyrie", "Wizard", "Giant", "Goblin Gang", "Arrows", "Cannon", "Spear Goblins", "Fireball"],
-      "4": ["Hog Rider", "Inferno Tower", "Freeze", "Witch", "Skeleton Army", "Zap", "Goblin Gang", "Fireball"],
-      "5": ["Miner", "Poison", "Dark Prince", "Mini P.E.K.K.A", "Zap", "Tornado", "Log", "Ice Spirit"],
-      "6": ["Battle Ram", "Electro Wizard", "Bandit", "P.E.K.K.A", "Zap", "Royal Ghost", "Magic Archer", "Goblin Cage"],
-      "7": ["Mega Minion", "Lightning", "Elixir Collector", "Three Musketeers", "Heal Spirit", "Hunter", "Ice Golem", "Cannon Cart"],
-      "8": ["Balloon", "Freeze", "Lumberjack", "Baby Dragon", "Tornado", "Ice Wizard", "Bowler", "Barbarian Barrel"],
-      "9": ["Royal Giant", "Furnace", "Fire Spirits", "Goblin Gang", "Hunter", "Zap", "Mega Minion", "Electro Dragon"],
-      "10": ["Miner", "Poison", "Wall Breakers", "Bomb Tower", "Bats", "Spear Goblins", "Log", "Ice Spirit"],
-      "11": ["X-Bow", "Tesla", "Archers", "Ice Spirit", "Skeletons", "Log", "Fireball", "Knight"],
-      "12": ["Graveyard", "Baby Dragon", "Freeze", "Tornado", "Knight", "Ice Wizard", "Barbarian Barrel", "Poison"],
-      "13": ["Golem", "Night Witch", "Baby Dragon", "Tornado", "Lightning", "Mega Minion", "Dark Prince", "Barbarian Barrel"],
-      "14": ["Royal Hogs", "Flying Machine
+      "1": [
+        ["Giant", "Archers", "Bomber", "Mini P.E.K.K.A", "Arrows", "Knight", "Musketeer", "Fireball"],
+        ["Prince", "Goblin Barrel", "Baby Dragon", "Zap", "Skeleton Army", "Archers", "Bomber", "Mini P.E.K.K.A"]
+      ],
+      "2": [
+        ["Valkyrie", "Wizard", "Giant", "Goblin Gang", "Arrows", "Cannon", "Spear Goblins", "Fireball"],
+        ["Mini P.E.K.K.A", "Prince", "Zap", "Bomber", "Archers", "Knight", "Skeleton Army", "Fireball"]
+      ]
+      // Add more decks for Arena 3–28 here
+    };
+
+    function matchDeck() {
+      const arena = document.getElementById('arena').value;
+      const deckList = document.getElementById('deckList');
+      const deckResult = document.getElementById('deckResult');
+
+      deckList.innerHTML = '';
+      if (decks[arena]) {
+        decks[arena].forEach((deck, index) => {
+          const li = document.createElement('li');
+          li.textContent = `Deck ${index + 1}: ${deck.join(', ')}`;
+          deckList.appendChild(li);
+        });
+        deckResult.style.display = 'block';
+      } else {
+        deckList.innerHTML = '<li>No decks available yet for this arena.</li>';
+        deckResult.style.display = 'block';
+      }
+    }
+  </script>
+</body>
+</html>
