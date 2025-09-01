@@ -35,14 +35,14 @@
       margin: auto;
       padding: 2rem;
     }
-    .deck {
+    .deck, .trending, .evos {
       background-color: #2c2c2c;
       padding: 1rem;
       margin-bottom: 2rem;
       border-radius: 10px;
       box-shadow: 0 0 10px #ff6600;
     }
-    .deck h3 {
+    .deck h3, .trending h3, .evos h3 {
       color: #ff6600;
     }
     .cards {
@@ -56,18 +56,6 @@
       height: 60px;
       border-radius: 8px;
       border: 2px solid #ff6600;
-    }
-    .vote {
-      margin-top: 1rem;
-    }
-    .vote button {
-      background-color: #ff6600;
-      color: #000;
-      border: none;
-      padding: 0.5rem 1rem;
-      border-radius: 5px;
-      font-weight: bold;
-      cursor: pointer;
     }
     .meta {
       margin-top: 1rem;
@@ -87,7 +75,11 @@
     <p>🔥 Vote for your favorite decks and explore top cards + evolutions</p>
   </header>
 
-  <div class="content" id="trendingContainer"></div>
+  <div class="content">
+    <div id="trendingContainer"></div>
+    <div id="trendingCards" class="trending"></div>
+    <div id="evoCards" class="evos"></div>
+  </div>
 
   <script>
     const trendingDecks = [
@@ -112,9 +104,77 @@
 
     function renderTrendingDecks() {
       const container = document.getElementById('trendingContainer');
-      container.innerHTML = '';
+      container.innerHTML = '<h3>Trending Decks</h3>';
 
       trendingDecks.forEach(deck => {
         const deckDiv = document.createElement('div');
         deckDiv.className = 'deck';
-        deckDiv.innerHTML = `<h3>${deck.name}</
+        deckDiv.innerHTML = `
+          <h3>${deck.name}</h3>
+          <div class="cards">
+            ${deck.cards.map(card => `<img src="${getCardImage(card)}" alt="${card}" title="${card}"/>`).join('')}
+          </div>
+          <div class="meta">Top Cards: ${deck.bestCards.join(', ')}</div>
+        `;
+        container.appendChild(deckDiv);
+      });
+    }
+
+    function renderTrendingCards() {
+      const cardFrequency = {};
+
+      trendingDecks.forEach(deck => {
+        deck.cards.forEach(card => {
+          cardFrequency[card] = (cardFrequency[card] || 0) + 1;
+        });
+      });
+
+      const sortedCards = Object.entries(cardFrequency)
+        .sort((a, b) => b[1] - a[1])
+        .map(entry => entry[0]);
+
+      const container = document.getElementById('trendingCards');
+      container.innerHTML = `
+        <h3>🔥 Most Trending Cards (Usage Across Decks)</h3>
+        <div class="cards">
+          ${sortedCards.map(card => `<img src="${getCardImage(card)}" alt="${card}" title="${card}"/>`).join('')}
+        </div>
+      `;
+    }
+
+    function renderEvoCards() {
+      const evoSet = new Set();
+
+      trendingDecks.forEach(deck => {
+        if (deck.evos && Array.isArray(deck.evos)) {
+          deck.evos.forEach(evo => evoSet.add(evo));
+        }
+      });
+
+      const evoList = Array.from(evoSet);
+
+      const container = document.getElementById('evoCards');
+      container.innerHTML = `
+        <h3>✨ Evolution Cards</h3>
+        <div class="cards">
+          ${evoList.map(card => `<img src="${getCardImage(card)}" alt="${card}" title="${card} (Evolution)"/>`).join('')}
+        </div>
+      `;
+    }
+
+    // Call rendering functions
+    renderTrendingDecks();
+    renderTrendingCards();
+    renderEvoCards();
+
+    // OPTIONAL: Weekly update simulation placeholder
+    // You could replace this with a real fetch from RoyaleAPI or another source
+    function updateWeekly() {
+      console.log("🔄 Weekly data update would be triggered here.");
+    }
+
+    // Simulate weekly update (e.g., every 7 days, in practice this would be backend/cron)
+    // setInterval(updateWeekly, 7 * 24 * 60 * 60 * 1000); // uncomment in real use
+  </script>
+</body>
+</html>
