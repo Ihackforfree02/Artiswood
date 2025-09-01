@@ -2,98 +2,123 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Best Decks by Arena | Clash Royale</title>
+  <title>Ultimate Clash Royale Deck Guide</title>
   <style>
     body {
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
       background: url('https://i.imgur.com/yourChosenUrl.jpg') center/cover fixed;
-      color: #fff;
+      color: #f0f0f0;
     }
-    nav {
-      background: rgba(0,0,0,0.7);
-      padding: 1rem;
-      text-align: center;
-      box-shadow: 0 0 10px #ff6600;
-    }
-    nav a {
-      color: #ff6600;
-      margin: 0 1rem;
-      text-decoration: none;
-      font-weight: bold;
-    }
+    nav { background: rgba(0,0,0,0.6); padding: 1rem; text-align: center; }
+    nav a { color: #ffd700; margin: 0 1rem; text-decoration: none; font-weight: bold; }
     header {
       text-align: center;
-      padding: 3rem 1rem 1rem;
+      padding: 2rem 1rem;
       background: rgba(0,0,0,0.5);
     }
-    header h1 { font-size: 2.5rem; color: #ff6600; }
-    .content { max-width: 1200px; margin: auto; padding: 2rem; background: rgba(0,0,0,0.5); }
-    .arena { margin-bottom: 3rem; padding-bottom: 2rem; border-bottom: 2px solid #ff6600; }
-    .arena h2 { color: #ff6600; }
-    .deck { margin-bottom: 2rem; }
-    .deck h3 { color: #ffd700; }
+    header h1 { font-size: 2.5rem; color: #ffd700; }
+    header p { font-size: 1rem; color: #ccc; }
+    .content { max-width: 1200px; margin: auto; padding: 1rem; background: rgba(0,0,0,0.5); }
+    .arena { margin-bottom: 2.5rem; border-bottom: 2px solid #ffd700; padding-bottom: 1rem; }
+    .arena h2 { color: #ffd700; margin-bottom: 0.5rem; }
+    .deck { margin-bottom: 1rem; }
+    .deck h3 { color: #ffa500; font-size: 1.1rem; }
     .cards { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 0.5rem; }
-    .card { text-align: center; width: 70px; }
-    .card img { width: 60px; height: 60px; border-radius: 5px; border: 2px solid #ffd700; object-fit: cover; }
-    .card-name { font-size: 0.75rem; margin-top: 4px; }
+    .card { width: 60px; text-align: center; cursor: pointer; }
+    .card img {
+      width: 50px; height: 50px;
+      border-radius: 5px;
+      border: 2px solid #ffd700;
+      object-fit: cover;
+    }
+    .card-name { font-size: 0.75rem; margin-top: 3px; }
+    .modal {
+      position: fixed; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      background: #333; padding: 1rem; border-radius: 8px;
+      box-shadow: 0 0 15px #000; display: none; max-width: 300px; width: 90%;
+      color: #fff; text-align: left;
+    }
+    .modal h4 { margin-top: 0; color: #ffd700; }
+    .modal p { font-size: 0.9rem; margin: .3rem 0; }
+    .modal button {
+      margin-top: 1rem; background: #ffd700;
+      color: #000; border: none; padding: 0.5rem;
+      border-radius: 5px; cursor: pointer;
+      width: 100%;
+    }
   </style>
 </head>
 <body>
-  <nav><a href="#">Home</a><a href="#">Deck Guide</a></nav>
-  <header><h1>Best Decks for Each Arena</h1><p>Top 3 decks per arena—cards shown with names</p></header>
+  <nav><a href="#">Home</a><a href="#">Decks</a><a href="#">Tools</a><a href="#">About</a></nav>
+  <header>
+    <h1>Ultimate Clash Royale Deck Guide</h1>
+    <p>Meta decks, matchup insights, and card stats—powered by DeckAI, DeckShop & Stats tools</p>
+  </header>
   <div class="content" id="arenaContainer"></div>
 
+  <div id="cardModal" class="modal">
+    <h4 id="modalTitle"></h4>
+    <div id="modalBody"></div>
+    <button onclick="cardModal.style.display='none'">Close</button>
+  </div>
+
   <script>
+    // Sample of arenas and decks (expand to all)
     const arenas = [
-      // Example for Arena 1 — Goblin Stadium
-      {
-        id: 1,
-        name: 'Goblin Stadium',
-        decks: [
-          { name: 'Goblin Barrel Cycle', cards: ['Goblin Barrel', 'Zap', 'Goblin Cage', 'Skeletons', 'Minions', 'Ice Spirit', 'Log', 'Princess'] },
-          { name: 'Hog Goblins', cards: ['Hog Rider', 'Goblin Gang', 'Barbarrel', 'Zap', 'Bats', 'Ice Golem', 'Log', 'Fireball'] },
-          { name: 'Royal Hogs Rush', cards: ['Royal Hogs', 'Poison', 'Cannon', 'Bats', 'Skeletons', 'Ice Wizard', 'Log', 'Fireball'] },
+      { id: 1, name: 'Goblin Stadium', decks: [
+          { name: 'Hog Cycle', cards: ['Hog Rider','Ice Spirit','Skeletons','Cannon','Musketeer','Log','Fireball','Knight'] },
+          { name: 'Giant Control', cards: ['Giant','Musketeer','Mini P.E.K.K.A','Bomber','Spear Goblins','Knight','Arrows','Fireball'] },
+          { name: 'Mini P.E.K.K.A Bridge Spam', cards: ['Mini P.E.K.K.A','Battle Ram','Fire Spirits','Electro Wizard','Zap','Knight','Furnace','Ice Spirit'] }
         ]
       },
-      {
-        id: 11,
-        name: 'Electro Valley',
-        decks: [
-          { name: 'Miner Poison', cards: ['Miner', 'Poison', 'Electro Wizard', 'Log', 'Skeletons', 'Inferno Dragon', 'Zap', 'Mega Knight'] },
-          { name: 'Log Bait', cards: ['Princess', 'Goblin Barrel', 'Knight', 'Inferno Tower', 'Log', 'Skeletons', 'Ice Wizard', 'Miner'] },
-          { name: 'Royal Giant Beatdown', cards: ['Royal Giant', 'Hunter', 'Fisherman', 'Log', 'Skeletons', 'Ice Spirit', 'Zap', 'Fireball'] },
+      { id: 8, name: 'Frozen Peak', decks: [
+          { name: 'Hog Ice Spam', cards: ['Hog Rider','Ice Golem','Musketeer','Cannon','Fireball','Log','Skeletons','Ice Spirit'] },
+          { name: '2.6 Hog Cycle', cards: ['Hog Rider','Ice Spirit','Skeletons','Cannon','Musketeer','Ice Golem','Log','Fireball'] },
+          { name: 'Freeze Miner Poison', cards: ['Freeze','Miner','Ice Golem','Skeletons','Poison','Bats','Fireball','Log'] }
         ]
-      },
-      // Add more arenas as needed up to Arena 23...
+      }
+      // ... Add arenas up to 23 or 28
     ];
 
-    function getCardImg(name) {
-      const key = name.toLowerCase().replace(/[\s\.']/g, '-');
-      return `https://royaleapi.github.io/cr-api-assets/cards/${key}.png`;
+    // Card stats fetch
+    let cardStats = {};
+    fetch('https://royaleapi.github.io/cr-api-data/cards_stats.json')
+      .then(r => r.json())
+      .then(data => cardStats = data);
+
+    const getCardImg = name => `https://royaleapi.github.io/cr-api-assets/cards/${name.toLowerCase().replace(/[\s.']/g,'-')}.png`;
+
+    function showCard(name) {
+      const stat = cardStats[name.toLowerCase()];
+      document.getElementById('modalTitle').innerText = name;
+      document.getElementById('modalBody').innerHTML = stat ? `
+        <p><strong>Elixir:</strong> ${stat.elixir}</p>
+        <p><strong>HP:</strong> ${stat.hitpoints}</p>
+        <p><strong>Damage:</strong> ${stat.damage}</p>
+        <p><strong>Speed:</strong> ${stat.speed}</p>
+        <p><strong>Type:</strong> ${stat.type}</p>
+      ` : '<p>Stats unavailable yet.</p>';
+      document.getElementById('cardModal').style.display = 'block';
     }
 
     function render() {
       const container = document.getElementById('arenaContainer');
       arenas.forEach(arena => {
-        const el = document.createElement('div');
-        el.className = 'arena';
-        el.innerHTML = `<h2>Arena ${arena.id}: ${arena.name}</h2>`;
-        arena.decks.forEach((deck, idx) => {
-          el.innerHTML += `
-            <div class="deck">
-              <h3>Deck ${idx + 1}: ${deck.name}</h3>
-              <div class="cards">
-                ${deck.cards.map(card => `
-                  <div class="card">
-                    <img src="${getCardImg(card)}" alt="${card}" />
-                    <div class="card-name">${card}</div>
-                  </div>
-                `).join('')}
-              </div>
-            </div>`;
+        const aDiv = document.createElement('div');
+        aDiv.className = 'arena';
+        aDiv.innerHTML = `<h2>Arena ${arena.id}: ${arena.name}</h2>`;
+        arena.decks.forEach((d, i) => {
+          aDiv.innerHTML += `<div class="deck"><h3>#${i+1} – ${d.name}</h3><div class="cards">
+            ${d.cards.map(c => `
+              <div class="card" onclick="showCard('${c}')">
+                <img src="${getCardImg(c)}" alt="${c}" />
+                <div class="card-name">${c}</div>
+              </div>`).join('')}
+          </div></div>`;
         });
-        container.appendChild(el);
+        container.appendChild(aDiv);
       });
     }
 
