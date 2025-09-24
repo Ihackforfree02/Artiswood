@@ -2,212 +2,186 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Undertale Crimson - Chapter 1</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crimson Quest - Chapter 1</title>
 <style>
-  body { margin:0; background:#141414; font-family: consolas; }
-  canvas { display:block; margin:0 auto; background:#1e1e1e; }
+  body{margin:0;overflow:hidden;background:#0b0b0b;font-family:monospace;}
+  canvas{display:block;margin:0 auto;background:#0c0c12;border:4px solid #141414;}
+  #uiOverlay{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;}
+  #bubble{position:absolute;bottom:80px;left:50%;transform:translateX(-50%);background:#12121a;color:#ffd166;padding:10px 14px;border:2px solid #fff;max-width:500px;display:none;}
+  #hud{position:absolute;top:10px;left:10px;color:#fff;}
 </style>
 </head>
 <body>
-<canvas id="gameCanvas" width="800" height="560"></canvas>
+<canvas id="gameCanvas" width="960" height="720"></canvas>
+<div id="uiOverlay">
+  <div id="bubble"></div>
+  <div id="hud"></div>
+</div>
 <script>
-const canvas = document.getElementById('gameCanvas');
-const ctx = canvas.getContext('2d');
+"use strict";
 
-const WIDTH = 800, HEIGHT = 560;
-const PLAYER_SIZE = 20;
-let keys = {};
+// ----------- Canvas Setup -------------
+const canvas=document.getElementById('gameCanvas'), ctx=canvas.getContext('2d');
+const bubble=document.getElementById('bubble'), hud=document.getElementById('hud');
+const WIDTH=canvas.width, HEIGHT=canvas.height;
+let keys={};
 
-// --- Key Input ---
-document.addEventListener('keydown', e => keys[e.key] = true);
-document.addEventListener('keyup', e => keys[e.key] = false);
+// ----------- Input -------------
+document.addEventListener('keydown',e=>keys[e.key]=true);
+document.addEventListener('keyup',e=>keys[e.key]=false);
 
-// --- Player ---
-class Player {
-    constructor(x,y){
-        this.x=x; this.y=y;
-        this.hp=20;
-        this.form='red';
-        this.size=PLAYER_SIZE;
+// ----------- Game State -------------
+let STATE="OVERWORLD"; // or "BATTLE"
+
+// ----------- Overworld Entities -------------
+class Player{
+  constructor(x,y){
+    this.x=x; this.y=y; this.w=32; this.h=48; this.color='#dc1e1e';
+    this.velX=0; this.velY=0; this.speed=250; this.jumpPower=550; this.gravity=1600;
+    this.onGround=false; this.hp=50; this.maxHp=50; this.canDash=true; this.dashPower=600;
+  }
+  rect(){ return {x:this.x,y:this.y,w:this.w,h:this.h}; }
+  update(dt,walls){
+    // Horizontal
+    if(keys['ArrowLeft']||keys['a']) this.velX=-this.speed;
+    else if(keys['ArrowRight']||keys['d']) this.velX=this.speed;
+    else this.velX=0;
+    // Jump
+    if((keys['ArrowUp']||keys['w']||keys[' ']) && this.onGround){ this.velY=-this.jumpPower; this.onGround=false; }
+    // Dash
+    if(keys['Shift'] && this.canDash){ this.velX*=3; this.velY=0; this.canDash=false; }
+    if(!keys['Shift']) this.canDash=true;
+    // Gravity
+    this.velY+=this.gravity*dt;
+    // Movement
+    let newX=this.x+this.velX*dt, newY=this.y+this.velY*dt;
+    this.onGround=false;
+    for(let w of walls){
+      // Horizontal
+      if(newX<w.x+w.w && newX+this.w>w.x && this.y<w.y+w.h && this.y+this.h>w.y){
+        if(this.velX>0) newX=w.x-this.w;
+        if(this.velX<0) newX=w.x+w.w;
+        this.velX=0;
+      }
+      // Vertical
+      if(this.x<w.x+w.w && this.x+this.w>w.x && newY<w.y+w.h && newY+this.h>w.y){
+        if(this.velY>0){ newY=w.y-this.h; this.velY=0; this.onGround=true; }
+        if(this.velY<0){ newY=w.y+w.h; this.velY=0; }
+      }
     }
-    rect(){ return {x:this.x, y:this.y, w:this.size, h:this.size}; }
-    draw(){ 
-        let color = {'red':'#dc1e1e','sword':'#fafe50','shield':'#50a0fa','bow':'#50fa50'}[this.form];
-        ctx.fillStyle=color;
-        ctx.fillRect(this.x,this.y,this.size,this.size);
-    }
-    switchForm(){
-        const forms=['red','sword','shield','bow'];
-        this.form=forms[(forms.indexOf(this.form)+1)%4];
-    }
-    update(dt, walls){
-        let dx=0,dy=0;
-        if(keys['ArrowLeft']) dx=-1;
-        if(keys['ArrowRight']) dx=1;
-        if(keys['ArrowUp']) dy=-1;
-        if(keys['ArrowDown']) dy=1;
-        if(dx && dy){ dx*=0.707; dy*=0.707; }
-        let spd=(this.form==='shield'?150:220)*dt;
-        let newX=this.x+dx*spd, newY=this.y+dy*spd;
-        if(!walls.some(w => newX<w.x+w.w && newX+this.size>w.x && newY<w.y+w.h && newY+this.size>w.y)){
-            this.x=newX; this.y=newY; 
-        }
-    }
+    this.x=newX; this.y=newY;
+    // Bounds
+    if(this.x<0) this.x=0; if(this.x+this.w>WIDTH) this.x=WIDTH-this.w;
+    if(this.y+this.h>HEIGHT){ this.y=HEIGHT-this.h; this.velY=0; this.onGround=true; }
+  }
+  draw(){ ctx.fillStyle=this.color; ctx.fillRect(this.x,this.y,this.w,this.h); }
 }
 
-// --- NPC ---
-class NPC {
-    constructor(x,y,dialogue){ this.x=x; this.y=y; this.w=32; this.h=32; this.dialogue=dialogue; this.index=0; }
-    rect(){ return {x:this.x, y:this.y, w:this.w, h:this.h}; }
-    draw(){ ctx.fillStyle='#fafe50'; ctx.fillRect(this.x,this.y,this.w,this.h); }
-    talk(){ let msg=this.dialogue[this.index]; this.index=(this.index+1)%this.dialogue.length; return msg; }
+class Wall{ constructor(x,y,w,h){ this.x=x; this.y=y; this.w=w; this.h=h; } draw(){ ctx.fillStyle='#888'; ctx.fillRect(this.x,this.y,this.w,this.h); } }
+class NPC{ constructor(x,y,text){ this.x=x; this.y=y; this.text=text; this.w=32; this.h=48; } rect(){ return {x:this.x,y:this.y,w:this.w,h:this.h}; } draw(){ ctx.fillStyle='#50fa50'; ctx.fillRect(this.x,this.y,this.w,this.h); } }
+class BossTrigger{ constructor(x,y,bossFunc){ this.x=x; this.y=y; this.w=48; this.h=48; this.bossFunc=bossFunc; } rect(){ return {x:this.x,y:this.y,w:this.w,h:this.h}; } draw(){ ctx.fillStyle='#ffea80'; ctx.fillRect(this.x,this.y,this.w,this.h); } }
+
+const player=new Player(100,400);
+const walls=[ new Wall(0,650,960,70), new Wall(300,500,200,20), new Wall(600,400,200,20) ];
+const npcs=[ new NPC(500,570,"Hello traveler! Use Z to talk.") ];
+let bosses=[];
+
+// ----------- Battle Entities -------------
+let BOSS={name:'Storm Herald', hp:360, hpMax:360, spareReq:5};
+let HEART={x:480,y:510,r:5,sp:300,i:0,hp:50,hpMax:50};
+let bullets=[], zones=[], telegraphs=[], attack=null;
+let turn='player', showArena=false, damagePopup=null;
+
+// ----------- HUD Functions -------------
+function updateHUD(){
+  if(STATE==="OVERWORLD") hud.innerHTML=`HP: ${player.hp}/${player.maxHp}`;
+  else if(STATE==="BATTLE") hud.innerHTML=`Player HP: ${HEART.hp}/${HEART.hpMax} | Boss: ${BOSS.hp}/${BOSS.hpMax}`;
 }
+function showBubbleText(t){ bubble.innerText=t; bubble.style.display='block'; }
+function hideBubbleText(){ bubble.style.display='none'; }
 
-// --- Bullet ---
-class Bullet {
-    constructor(x,y,vx,vy,color='#fff',size=8){ this.x=x; this.y=y; this.vx=vx; this.vy=vy; this.color=color; this.size=size; }
-    update(dt){ this.x+=this.vx*dt; this.y+=this.vy*dt; }
-    draw(){ ctx.fillStyle=this.color; ctx.fillRect(this.x,this.y,this.size,this.size); }
-    rect(){ return {x:this.x, y:this.y, w:this.size, h:this.size}; }
-}
+// ----------- Helper Collision -------------
+function rectsOverlap(a,b){ return a.x<a.x+a.w && b.x<b.x+b.w && a.y<a.y+a.h && b.y<b.y+b.h && a.x+b.w>a.x && a.y+b.h>a.y; }
+function intersect(a,b){ return !(a.x+b.w<a.x || a.x>a.x+b.w || a.y+b.h<a.y || a.y>a.y+b.h); }
 
-// --- Boss ---
-class Boss {
-    constructor(name,hp,center,patterns){
-        this.name=name; this.hp=hp; this.max_hp=hp;
-        this.center=center;
-        this.patterns=patterns;
-        this.phase=0;
-        this.timer=0;
-        this.attacking=false;
-    }
-    startAttack(){ this.attacking=true; this.timer=0; }
-    update(dt, bullets, player){
-        if(!this.attacking) return;
-        this.timer+=dt;
-        this.patterns[this.phase](this.timer, bullets, player);
-        if(this.timer>4){ this.attacking=false; this.phase=(this.phase+1)%this.patterns.length; }
-    }
-    draw(){
-        ctx.fillStyle='#32fa32';
-        ctx.beginPath(); ctx.arc(this.center[0], this.center[1], 60,0,Math.PI*2); ctx.fill();
-        ctx.fillStyle='#141414';
-        ctx.beginPath(); ctx.arc(this.center[0]-15, this.center[1]-15, 10,0,Math.PI*2); ctx.fill();
-        ctx.beginPath(); ctx.arc(this.center[0]+15, this.center[1]-15, 10,0,Math.PI*2); ctx.fill();
-        // HP bar
-        ctx.fillStyle='red'; ctx.fillRect(300,40,200,12);
-        ctx.fillStyle='yellow'; ctx.fillRect(300,40,200*(this.hp/this.max_hp),12);
-        ctx.fillStyle='white'; ctx.font='18px consolas'; ctx.fillText(this.name,300,20);
-    }
-}
-
-// --- Boss patterns ---
-function ashrootPattern(t, bullets){ if(Math.floor(t*10)%12===0){ for(let i=0;i<5;i++) bullets.push(new Bullet(160-20, 60+i*60,150,0,'#32fa32',12)); } }
-function synthixPattern(t, bullets){ if(Math.floor(t*10)%10===0){ for(let i=0;i<8;i++){ let a=i*Math.PI*2/8; bullets.push(new Bullet(400,120,Math.cos(a)*180,Math.sin(a)*180,'#50faca')); } } }
-function veyraPattern(t, bullets){ if(Math.floor(t*10)%15===0) bullets.push(new Bullet(Math.random()*480+160, 60,0,180,'#50a0fa')); }
-
-// --- Battle ---
-class Battle {
-    constructor(boss){
-        this.player=new Player(400,200);
-        this.bullets=[];
-        this.boss=boss;
-        this.state='MENU';
-        this.sel=0;
-        this.msg=`${boss.name} blocks your path!`;
-    }
-    update(dt){
-        this.player.update(dt,[]);
-        this.bullets.forEach(b=>b.update(dt));
-        this.bullets=this.bullets.filter(b=>b.x>-50 && b.x<850 && b.y>-50 && b.y<600);
-        this.bullets.forEach(b=>{
-            let r=this.player.rect();
-            if(b.x<r.x+r.w && b.x+b.size>r.x && b.y<r.y+r.h && b.y+b.size>r.y){ this.player.hp--; }
-        });
-        if(this.state==='ENEMY'){ this.boss.update(dt,this.bullets,this.player); if(!this.boss.attacking) this.state='MENU'; }
-    }
-    draw(){
-        ctx.fillStyle='#141414'; ctx.fillRect(0,0,WIDTH,HEIGHT);
-        ctx.strokeStyle='white'; ctx.strokeRect(160,60,480,320);
-        this.boss.draw();
-        this.bullets.forEach(b=>b.draw());
-        this.player.draw();
-        const opts=['FIGHT','ACT','ITEM','MERCY'];
-        opts.forEach((o,i)=>{ ctx.fillStyle=i===this.sel?'#fafe50':'white'; ctx.fillText(o,200+i*100,60+320+60); });
-        ctx.fillStyle='white'; ctx.fillText(`HP: ${this.player.hp}/20`,160,60+320+20);
-        ctx.fillStyle='yellow'; ctx.fillText(this.msg,200,60+320+100);
-    }
-    act(choice){
-        if(choice==='FIGHT'){ let dmg=Math.floor(Math.random()*4)+5; this.boss.hp-=dmg; this.msg=`You hit ${this.boss.name} for ${dmg}!`; this.state='ENEMY'; this.boss.startAttack(); }
-        if(choice==='ACT'){ this.msg=`You talk to ${this.boss.name}. They giggle.`; this.state='ENEMY'; this.boss.startAttack(); }
-        if(choice==='ITEM'){ this.player.hp=Math.min(20,this.player.hp+5); this.msg=`You eat a snack. +5 HP.`; this.state='ENEMY'; this.boss.startAttack(); }
-        if(choice==='MERCY'){ if(this.boss.hp<Math.floor(this.boss.max_hp*0.25)){ this.msg=`You spared ${this.boss.name}!`; this.state='WIN'; } else { this.msg=`${this.boss.name} refuses mercy!`; this.state='ENEMY'; this.boss.startAttack(); } }
-    }
-}
-
-// --- Overworld ---
-class Overworld {
-    constructor(){
-        this.player=new Player(400,300);
-        this.npcs=[ new NPC(200,200, ["Hi!","Watch out for Ashroot!"]), new NPC(500,150, ["Welcome to the forest!","Have fun!"]) ];
-        this.walls=[{x:100,y:100,w:600,h:20},{x:100,y:400,w:600,h:20}];
-        this.state='PLAY';
-        this.bosses=[ new Boss('Ashroot',40,[400,120],[ashrootPattern]),
-                      new Boss('Synthix',50,[400,120],[synthixPattern]),
-                      new Boss('Veyra',60,[400,120],[veyraPattern]) ];
-        this.battle=null;
-        this.msg='';
-    }
-    update(dt){
-        if(this.state==='PLAY'){
-            this.player.update(dt,this.walls);
-            this.bosses.forEach((boss,i)=>{
-                let trigger={x:150+i*200,y:250,w:50,h:50};
-                let r=this.player.rect();
-                if(r.x<trigger.x+trigger.w && r.x+r.w>trigger.x && r.y<trigger.y+trigger.h && r.y+r.h>trigger.y){
-                    this.state='BATTLE'; this.battle=new Battle(boss); this.msg=`A wild ${boss.name} appears!`;
-                }
-            });
-        } else if(this.state==='BATTLE'){
-            this.battle.update(dt);
-            if(this.battle.state==='WIN'){ this.state='PLAY'; this.msg=`${this.battle.boss.name} defeated!`; this.bosses.shift(); }
-        }
-    }
-    draw(){
-        ctx.fillStyle='#141414'; ctx.fillRect(0,0,WIDTH,HEIGHT);
-        if(this.state==='PLAY'){
-            ctx.fillStyle='white';
-            this.walls.forEach(w=>ctx.fillRect(w.x,w.y,w.w,w.h));
-            this.npcs.forEach(n=>n.draw());
-            this.player.draw();
-            if(this.msg){ ctx.fillStyle='yellow'; ctx.fillText(this.msg,200,20); }
-        } else if(this.state==='BATTLE'){ this.battle.draw(); }
-    }
-}
-
-const world=new Overworld();
+// ----------- Game Loop -------------
 let lastTime=0;
 function gameLoop(timestamp){
-    let dt=(timestamp-lastTime)/1000; lastTime=timestamp;
-    if(keys['q']){ keys['q']=false; if(world.state==='PLAY') world.player.switchForm(); else world.battle.player.switchForm(); }
-    if((keys['z']||keys['Enter'])){ keys['z']=keys['Enter']=false;
-        if(world.state==='PLAY'){
-            world.npcs.forEach(n=>{
-                let r=world.player.rect(), nr=n.rect();
-                if(r.x<nr.x+nr.w && r.x+r.w>nr.x && r.y<nr.y+nr.h && r.y+r.h>nr.y){ world.msg=n.talk(); }
-            });
-        } else if(world.state==='BATTLE' && world.battle.state==='MENU'){
-            world.battle.act(['FIGHT','ACT','ITEM','MERCY'][world.battle.sel]);
-        }
-    }
-    if(world.state==='BATTLE'){
-        if(keys['ArrowRight']){ keys['ArrowRight']=false; world.battle.sel=(world.battle.sel+1)%4; }
-        if(keys['ArrowLeft']){ keys['ArrowLeft']=false; world.battle.sel=(world.battle.sel+3)%4; }
-    }
-    world.update(dt);
-    world.draw();
-    requestAnimationFrame(gameLoop);
+  let dt=(timestamp-lastTime)/1000; lastTime=timestamp;
+  update(dt); draw();
+  requestAnimationFrame(gameLoop);
 }
+
+// ----------- Update Function -------------
+function update(dt){
+  if(STATE==="OVERWORLD"){
+    player.update(dt,walls);
+    // NPC interactions
+    for(let n of npcs){
+      let r=player.rect(), nr=n.rect();
+      if(r.x<nr.x+nr.w && r.x+r.w>nr.x && r.y<nr.y+nr.h && r.y+r.h>nr.y){
+        if(keys['z'] || keys['Z']) showBubbleText(n.text);
+      }
+    }
+    // Boss triggers
+    for(let b of bosses){
+      let r=player.rect(), br=b.rect();
+      if(r.x<br.x+br.w && r.x+r.w>br.x && r.y<br.y+br.h && r.y+r.h>br.y){
+        STATE="BATTLE"; startBattle(b.bossFunc);
+      }
+    }
+  }
+  else if(STATE==="BATTLE"){
+    // Battle logic will be re-used from template
+    HEART.i=Math.max(0,HEART.i-dt);
+    // Bullet updates
+    for(const b of bullets){
+      b.t+=dt;
+      if(b.type==='shock') b.r+=b.vr*dt;
+      if(b.type==='bolt'){ if(b.t>=0) b.y+=b.vy*dt; }
+    }
+    bullets=bullets.filter(b=>b.type!=='shock' || b.r<300);
+  }
+  updateHUD();
+}
+
+// ----------- Draw Function -------------
+function draw(){
+  ctx.fillStyle='#0c0c12'; ctx.fillRect(0,0,WIDTH,HEIGHT);
+  if(STATE==="OVERWORLD"){
+    walls.forEach(w=>w.draw());
+    npcs.forEach(n=>n.draw());
+    bosses.forEach(b=>b.draw());
+    player.draw();
+  } else if(STATE==="BATTLE"){
+    // Draw battle arena, boss sprite, bullets
+    ctx.fillStyle='#222'; ctx.fillRect(240,420,480,180);
+    ctx.fillStyle='red'; ctx.fillRect(240,420+180,480*BOSS.hp/BOSS.hpMax,10);
+    // Draw bullets
+    bullets.forEach(b=>{
+      if(b.type==='shock'){ ctx.strokeStyle='yellow'; ctx.beginPath(); ctx.arc(480,510,b.r,0,Math.PI*2); ctx.stroke(); }
+      if(b.type==='bolt'){ ctx.fillStyle='white'; ctx.fillRect(b.x,b.y,b.w,b.h); }
+    });
+    // Draw HEART
+    ctx.fillStyle='lime'; ctx.beginPath(); ctx.arc(HEART.x,HEART.y,HEART.r,0,Math.PI*2); ctx.fill();
+  }
+}
+
+// ----------- Start Battle -------------
+function startBattle(bossFunc){
+  showArena=true;
+  turn='player';
+  BOSS.hp=BOSS.hpMax;
+  HEART.hp=HEART.hpMax;
+  attack=bossFunc;
+}
+
+// ----------- Initialize ---------
+bosses.push(new BossTrigger(800,580,()=>{
+  console.log("Battle triggered: Storm Herald!");
+}));
+updateHUD();
 requestAnimationFrame(gameLoop);
 </script>
 </body>
